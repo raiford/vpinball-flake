@@ -1,4 +1,3 @@
-# TODO: all of the git repos could be inputs.....
 {
   description = "A Nix flake for VPinball";
 
@@ -182,7 +181,7 @@
         import nixpkgs {
           inherit system;
           config.allowUnfree = true;
-          overlays = [ self.overlays.default ]; # TODO: move individual packages out to package.nix files and use overlays
+          overlays = [ self.overlays.default ];
         }
       );
     in

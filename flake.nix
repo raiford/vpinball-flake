@@ -177,26 +177,6 @@
 
       forAllSystems = nixpkgs.lib.genAttrs supportedSystems;
 
-      localPkgs = [
-        "bgfx"
-        "cargs"
-        "freeimage"
-        "libaltsound"
-        "libdmdutil"
-        "libdof"
-        "libframeutil"
-        "libpupdmd"
-        "libserum"
-        "libzedmd"
-        "pinmame"
-        "sockpp"
-        "libusb"
-        "libvni"
-        "libftdi"
-        "libserialport"
-        "hidapi"
-      ];
-
       pkgsFor = forAllSystems (
         system:
         import nixpkgs {

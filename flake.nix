@@ -26,9 +26,9 @@
     };
     bgfx-cmake = {
       # We have to use this url path to get it to fetch submodules
-      type = "git";
-      url = "https://github.com/bkaradzic/bgfx.cmake?ref=v1.136.9135-511";
-      submodules = true;
+      type = "tarball";
+      url = "https://github.com/bkaradzic/bgfx.cmake/releases/download/v1.136.9135-511/bgfx.cmake.v1.136.9135-511.tar.gz";
+      #submodules = true;
       #type = "github";
       #owner = "bkaradzic";
       #repo = "bgfx.cmake";
@@ -268,6 +268,9 @@
 
                 echo "Updating bgfx-patch: ''${BGFX_PATCH_SHA}"
                 nix flake update bgfx-patch --override-input bgfx-patch github:vbousquet/bgfx/''${BGFX_PATCH_SHA}
+
+                echo "Updating bgfx.cmake: ''${BGFX_CMAKE_VERSION}"
+                nix flake update bgfx-cmake --override-input bgfx-cmake https://github.com/bkaradzic/bgfx.cmake/releases/download/v''${BGFX_CMAKE_VERSION}/bgfx.cmake.v''${BGFX_CMAKE_VERSION}.tar.gz
 
                 echo "Updating pinmame: ''${PINMAME_SHA}"
                 nix flake update pinmame --override-input pinmame github:vbousquet/pinmame/''${PINMAME_SHA}

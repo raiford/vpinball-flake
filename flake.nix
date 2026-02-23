@@ -234,7 +234,6 @@
           pkgs = pkgsFor.${system};
 
           updateInputs = pkgs.mkShell {
-            buildInputs = self.packages.${system}.vpinball.buildInputs;
 
             shellHook = ''
               nix develop .#updateDirectInputs
@@ -245,7 +244,6 @@
 
           # Updates inputs with SHA hashes from config.sh in the vpinball repo.
           updateDirectInputs = pkgs.mkShell {
-            buildInputs = self.packages.${system}.vpinball.buildInputs;
 
             shellHook = ''
               if [ -f "${inputs.vpinball}/platforms/config.sh" ]; then

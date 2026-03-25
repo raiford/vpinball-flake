@@ -18,6 +18,12 @@
       repo = "libdmdutil";
       flake = false;
     };
+    libwinevbs = {
+      type = "github";
+      owner = "vpinball";
+      repo = "libwinevbs";
+      flake = false;
+    };
     freeimage = {
       type = "github";
       owner = "toxieainc";
@@ -211,6 +217,7 @@
         freeimage = final.callPackage ./pkgs/freeimage { inherit inputs; };
         libaltsound = final.callPackage ./pkgs/libaltsound { inherit inputs; };
         libdmdutil = final.callPackage ./pkgs/libdmdutil { inherit inputs; };
+        libwinevbs = final.callPackage ./pkgs/libwinevbs { inherit inputs; };
         libdof = final.callPackage ./pkgs/libdof { inherit inputs; };
         libframeutil = final.callPackage ./pkgs/libframeutil { inherit inputs; };
         libpupdmd = final.callPackage ./pkgs/libpupdmd { inherit inputs; };
@@ -293,6 +300,9 @@
 
                 echo "Updating libdmdutil: ''${LIBDMDUTIL_SHA}"
                 nix flake update libdmdutil --override-input libdmdutil github:vpinball/libdmdutil/''${LIBDMDUTIL_SHA}
+
+                echo "Updating libwinevbs: ''${LIBWINEVBS_SHA}"
+                nix flake update libwinevbs --override-input libwinevbs github:vpinball/libwinevbs/''${LIBWINEVBS_SHA}
 
                 echo "Updating libdof: ''${LIBDOF_SHA}"
                 nix flake update libdof --override-input libdof github:jsm174/libdof/''${LIBDOF_SHA}

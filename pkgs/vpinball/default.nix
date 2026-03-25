@@ -23,6 +23,7 @@ stdenv.mkDerivation {
     bgfx
     pinmame
     libdmdutil
+    libwinevbs
     libaltsound
     libdof
     libpupdmd

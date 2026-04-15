@@ -21,7 +21,6 @@ stdenv.mkDerivation {
   cmakeFlags = [
     "-DPLATFORM=linux"
     "-DARCH=x64"
-    "-DBUILD_STATIC=OFF"
     "-DPOST_BUILD_COPY_EXT_LIBS=OFF"
     "-DCMAKE_BUILD_TYPE=${buildType}"
     "-DCMAKE_C_FLAGS=-Wno-format-security"

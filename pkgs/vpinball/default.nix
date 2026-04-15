@@ -29,10 +29,13 @@ stdenv.mkDerivation {
     libdof
     libpupdmd
     libserum
-    ffmpeg
     libzip
     hidapi
     libvni
+
+    # vpinball upstream is using a SHA that is pinned around v7
+    # If the vpinball updates to v8 this should be updated.
+    ffmpeg_7
 
     # System dependencies
     sdl3

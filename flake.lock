@@ -45,22 +45,6 @@
         "type": "github"
       }
     },
-    "ffmpeg": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1740961029,
-        "narHash": "sha256-GyS8imOqfOUPxXrzCiQtzCQIIH6bvWmQAB0fKUcRsW4=",
-        "owner": "FFmpeg",
-        "repo": "FFmpeg",
-        "rev": "db69d06eeeab4f46da15030a80d539efb4503ca8",
-        "type": "github"
-      },
-      "original": {
-        "owner": "FFmpeg",
-        "repo": "FFmpeg",
-        "type": "github"
-      }
-    },
     "freeimage": {
       "flake": false,
       "locked": {
@@ -338,7 +322,6 @@
         "bgfx-cmake": "bgfx-cmake",
         "bgfx-patch": "bgfx-patch",
         "cargs": "cargs",
-        "ffmpeg": "ffmpeg",
         "freeimage": "freeimage",
         "hidapi": "hidapi",
         "libaltsound": "libaltsound",

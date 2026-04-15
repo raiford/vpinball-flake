@@ -102,12 +102,14 @@
       repo = "libzip";
       flake = false;
     };
-    ffmpeg = {
-      type = "github";
-      owner = "FFmpeg";
-      repo = "FFmpeg";
-      flake = false;
-    };
+
+    # Disabled to use ffmpeg from upstream nixpkgs.
+    #ffmpeg = {
+    #  type = "github";
+    #  owner = "FFmpeg";
+    #  repo = "FFmpeg";
+    #  flake = false;
+    #};
 
     # https://github.com/vpinball/libdmdutil/blob/master/platforms/config.sh
     libusb = {
@@ -348,8 +350,8 @@
                 echo "Updating libdof: ''${LIBDOF_SHA}"
                 nix flake update libdof --override-input libdof github:jsm174/libdof/''${LIBDOF_SHA}
 
-                echo "Updating ffmpeg: ''${FFMPEG_SHA}"
-                nix flake update ffmpeg --override-input ffmpeg github:FFmpeg/FFmpeg/''${FFMPEG_SHA}
+                #echo "Updating ffmpeg: ''${FFMPEG_SHA}"
+                #nix flake update ffmpeg --override-input ffmpeg github:FFmpeg/FFmpeg/''${FFMPEG_SHA}
 
                 echo "Updating libzip: ''${LIBZIP_SHA}"
                 nix flake update libzip --override-input libzip github:nih-at/libzip/''${LIBZIP_SHA}

@@ -88,12 +88,18 @@
       type = "git";
       url = "https://github.com/libsdl-org/SDL_image";
       submodules = true;
+      # allRefs so the locked rev is found even when it isn't on the
+      # current HEAD of main (release branches, post-rebase refs, etc.).
+      # Without this, nix fetches against main only, which can produce
+      # a different tree than the pinned rev and trip a NAR hash mismatch.
+      allRefs = true;
       flake = false;
     };
     sdl3-ttf = {
       type = "git";
       url = "https://github.com/libsdl-org/SDL_ttf";
       submodules = true;
+      allRefs = true;
       flake = false;
     };
     libzip = {

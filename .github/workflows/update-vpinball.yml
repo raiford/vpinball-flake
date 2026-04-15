@@ -1,0 +1,112 @@
+name: update-vpinball
+
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update:
+    name: Bump vpinball input and open draft PR
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout fork default branch
+        uses: actions/checkout@v4
+
+      - name: Install nix
+        uses: cachix/install-nix-action@v27
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+            accept-flake-config = true
+
+      - name: Bump vpinball input to latest upstream master
+        run: nix flake update vpinball
+
+      - name: Cascade child inputs
+        id: cascade
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          nix develop .#updateInputs 2>&1 | tee cascade.log
+
+      - name: Detect transitive dep conflicts
+        id: conflicts
+        if: always()
+        run: |
+          if grep -qE 'hash mismatch|CONFLICT' cascade.log; then
+            echo "conflict=true" >> "$GITHUB_OUTPUT"
+            echo "::warning::Transitive dependency conflict detected in cascade.log"
+          else
+            echo "conflict=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Check for upstream dep drift
+        id: drift
+        if: always()
+        continue-on-error: true
+        run: ./scripts/check-external.sh
+
+      - name: Upload cascade log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cascade-log
+          path: cascade.log
+          if-no-files-found: ignore
+
+      - name: Create or update PR
+        if: always()
+        uses: peter-evans/create-pull-request@v7
+        with:
+          branch: chore/update-vpinball
+          base: main
+          commit-message: |
+            chore: cascade vpinball inputs from upstream master
+
+            Bumps the `vpinball` input to upstream master and cascades
+            all child inputs via `nix develop .#updateInputs`. Build
+            verification happens in the separate `build` workflow.
+          title: "chore: bump vpinball + cascade child inputs"
+          body: |
+            📝 Draft — build not yet verified.
+
+            This PR was opened by the `update-vpinball` workflow:
+
+            1. `nix flake update vpinball` — bump to latest upstream master.
+            2. `nix develop .#updateInputs` — cascade child inputs from
+               `platforms/config.sh` files in `libdmdutil`, `libdof`, `libzedmd`.
+            3. `scripts/check-external.sh` — audit for new upstream
+               dependencies not yet wired into the flake.
+
+            | Step | Outcome |
+            |---|---|
+            | Cascade | `${{ steps.cascade.outcome }}` |
+            | Conflict detected | `${{ steps.conflicts.outputs.conflict }}` |
+            | Drift check | `${{ steps.drift.outcome }}` |
+
+            Full cascade log is attached as a workflow artifact:
+            <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}>
+
+            **Before marking ready to merge**:
+
+            1. Manually trigger the `build` workflow against this branch
+               and confirm `nix build .#vpinball` succeeds.
+            2. Review the `cascade-log` artifact for any `hash mismatch`
+               warnings.
+            3. Smoke-test a known-good table locally. See the runbook in
+               [`README.md`](../blob/main/README.md#update-runbook).
+          labels: |
+            vpinball-bump
+            automated
+          draft: true
+
+      - name: Fail the job if cascade, conflict, or drift flagged
+        if: steps.cascade.outcome != 'success' || steps.conflicts.outputs.conflict == 'true' || steps.drift.outcome != 'success'
+        run: |
+          echo "::error::One or more gates failed. PR opened as draft for human triage. See the attached cascade-log artifact."
+          exit 1

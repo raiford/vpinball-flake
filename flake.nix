@@ -211,7 +211,7 @@
 
       forAllSystems = nixpkgs.lib.genAttrs supportedSystems;
 
-      customPackages = final: {
+      customPackages = final: prev: {
         bgfx = final.callPackage ./pkgs/bgfx {
           bgfx-cmake = inputs.bgfx-cmake;
           bgfx-patch = inputs.bgfx-patch;
@@ -227,15 +227,27 @@
         libserum = final.callPackage ./pkgs/libserum { inherit inputs; };
         libzedmd = final.callPackage ./pkgs/libzedmd { inherit inputs; };
         pinmame = final.callPackage ./pkgs/pinmame { inherit inputs; };
-        sdl3 = final.callPackage ./pkgs/sdl3 { inherit inputs; };
-        sdl3-ttf = final.callPackage ./pkgs/sdl3-ttf { inherit inputs; };
-        sdl3-image = final.callPackage ./pkgs/sdl3-image { inherit inputs; };
         sockpp = final.callPackage ./pkgs/sockpp { inherit inputs; };
         libusb = final.callPackage ./pkgs/libusb { inherit inputs; };
         libvni = final.callPackage ./pkgs/libvni { inherit inputs; };
         libftdi = final.callPackage ./pkgs/libftdi { inherit inputs; };
         libserialport = final.callPackage ./pkgs/libserialport { inherit inputs; };
         hidapi = final.callPackage ./pkgs/hidapi { inherit inputs; };
+
+        # SDL has a lot of custom build options in upstream nixpkgs for audio and video stuff.
+        # If necessary to force support for wayland you can add a .override to these to enable waylandSupport
+        sdl3 = prev.sdl3.overrideAttrs (old: {
+          src = inputs.sdl3;
+          version = "";
+        });
+        sdl3-ttf = prev.sdl3-ttf.overrideAttrs (old: {
+          src = inputs.sdl3-ttf;
+          version = "";
+        });
+        sdl3-image = prev.sdl3-image.overrideAttrs (old: {
+          src = inputs.sdl3-image;
+          version = "";
+        });
       };
 
       pkgsFor = forAllSystems (
@@ -253,13 +265,13 @@
     in
     {
 
-      overlays.default = final: prev: customPackages final;
+      overlays.default = final: prev: customPackages final prev;
 
       packages = forAllSystems (
         system:
         let
           pkgs = pkgsFor.${system};
-          customNames = builtins.attrNames (customPackages pkgs);
+          customNames = builtins.attrNames (customPackages pkgs pkgs);
 
           makeVPinball =
             buildType:

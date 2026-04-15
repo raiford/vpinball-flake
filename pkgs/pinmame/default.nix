@@ -31,16 +31,12 @@ stdenv.mkDerivation {
   ];
 
   meta = with lib; {
-    description = "TODO";
-    #homepage = "https://steamdb.info/app/896660/";
-    #changelog = "https://store.steampowered.com/news/app/892970?updates=true";
-    #sourceProvenance = with sourceTypes; [
-    #  binaryBytecode
-    #  binaryNativeCode
-    #];
-    #license = licenses.unfree;
-    #maintainers = with maintainers; [ aidalgol ];
-    #platforms = [ "x86_64-linux" ];
+    description = "Pinball emulator based on MAME, built as libpinmame for vpinball (vbousquet fork)";
+    homepage = "https://github.com/vbousquet/pinmame";
+    # Mixed: newer files are BSD-3-Clause, legacy files remain under the non-commercial
+    # "old MAME" license. Treat the whole as unfreeRedistributable to be safe.
+    license = licenses.unfreeRedistributable;
+    platforms = platforms.linux;
   };
 
 }

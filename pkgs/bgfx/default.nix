@@ -1,4 +1,5 @@
 {
+  lib,
   stdenv,
   pkgs,
   fetchFromGitHub,
@@ -66,4 +67,11 @@ stdenv.mkDerivation {
     "-DBGFX_CONFIG_MAX_FRAME_BUFFERS=256"
     "-DCMAKE_BUILD_TYPE=Release"
   ];
+
+  meta = with lib; {
+    description = "Cross-platform rendering library (bgfx.cmake build with vpinball's patched bgfx)";
+    homepage = "https://github.com/bkaradzic/bgfx.cmake";
+    license = licenses.bsd2;
+    platforms = platforms.linux;
+  };
 }

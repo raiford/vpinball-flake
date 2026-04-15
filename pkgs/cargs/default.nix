@@ -18,16 +18,10 @@ stdenv.mkDerivation {
     "-DCMAKE_BUILD_TYPE=Release"
   ];
   meta = with lib; {
-    description = "TODO";
-    #homepage = "https://steamdb.info/app/896660/";
-    #changelog = "https://store.steampowered.com/news/app/892970?updates=true";
-    #sourceProvenance = with sourceTypes; [
-    #  binaryBytecode
-    #  binaryNativeCode
-    #];
-    #license = licenses.unfree;
-    #maintainers = with maintainers; [ aidalgol ];
-    #platforms = [ "x86_64-linux" ];
+    description = "Simple command line argument parser library written in pure C";
+    homepage = "https://github.com/likle/cargs";
+    license = licenses.mit;
+    platforms = platforms.linux;
   };
 
 }

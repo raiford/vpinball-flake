@@ -1,4 +1,5 @@
 {
+  lib,
   stdenv,
   pkgs,
   inputs,
@@ -15,4 +16,11 @@ stdenv.mkDerivation {
   cmakeFlags = [
     "-DCMAKE_BUILD_TYPE=Release"
   ];
+
+  meta = with lib; {
+    description = "Simple, modern, C++ socket library wrapping BSD sockets and related APIs";
+    homepage = "https://github.com/fpagliughi/sockpp";
+    license = licenses.bsd3;
+    platforms = platforms.linux;
+  };
 }

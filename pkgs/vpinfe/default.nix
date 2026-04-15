@@ -46,10 +46,9 @@ pythonPackages.buildPythonPackage {
   '';
 
   meta = with lib; {
-    description = "A vpinball frontend for Linux, Mac, and Windows";
+    description = "Visual Pinball frontend for Linux, Mac, and Windows";
     homepage = "https://github.com/superhac/vpinfe";
-    #license = licenses.unfree; # No license file found
-    # maintainers = with maintainers; [ ];
+    license = licenses.mit;
     platforms = platforms.linux;
   };
 }

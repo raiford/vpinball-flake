@@ -31,16 +31,10 @@ stdenv.mkDerivation {
   ];
 
   meta = with lib; {
-    description = "TODO";
-    #homepage = "https://steamdb.info/app/896660/";
-    #changelog = "https://store.steampowered.com/news/app/892970?updates=true";
-    #sourceProvenance = with sourceTypes; [
-    #  binaryBytecode
-    #  binaryNativeCode
-    #];
-    #license = licenses.unfree;
-    #maintainers = with maintainers; [ aidalgol ];
-    #platforms = [ "x86_64-linux" ];
+    description = "Library to talk to FTDI chips (jsm174 fork used by libdof)";
+    homepage = "https://github.com/jsm174/libftdi";
+    license = licenses.lgpl21;
+    platforms = platforms.linux;
   };
 
 }

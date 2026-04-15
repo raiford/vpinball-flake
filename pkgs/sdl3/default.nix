@@ -1,4 +1,5 @@
 {
+  lib,
   stdenv,
   pkgs,
   inputs,
@@ -24,4 +25,11 @@ stdenv.mkDerivation {
     "-DSDL_OPENGLES=OFF"
     "-DCMAKE_BUILD_TYPE=Release"
   ];
+
+  meta = with lib; {
+    description = "Simple DirectMedia Layer 3, a cross-platform development library for multimedia";
+    homepage = "https://github.com/libsdl-org/SDL";
+    license = licenses.zlib;
+    platforms = platforms.linux;
+  };
 }

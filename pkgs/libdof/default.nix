@@ -1,4 +1,5 @@
 {
+  lib,
   stdenv,
   pkgs,
   inputs,
@@ -27,4 +28,11 @@ stdenv.mkDerivation {
     "-DPOST_BUILD_COPY_EXT_LIBS=OFF"
     "-DCMAKE_BUILD_TYPE=Release"
   ];
+
+  meta = with lib; {
+    description = "Cross-platform C++ port of DirectOutput Framework for pinball feedback hardware";
+    homepage = "https://github.com/jsm174/libdof";
+    license = licenses.gpl3Plus;
+    platforms = platforms.linux;
+  };
 }

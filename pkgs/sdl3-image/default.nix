@@ -1,4 +1,5 @@
 {
+  lib,
   stdenv,
   pkgs,
   inputs,
@@ -27,4 +28,11 @@ stdenv.mkDerivation {
     "-DSDL3_DIR=${sdl3}"
     "-DCMAKE_BUILD_TYPE=Release"
   ];
+
+  meta = with lib; {
+    description = "SDL3 image file loading library";
+    homepage = "https://github.com/libsdl-org/SDL_image";
+    license = licenses.zlib;
+    platforms = platforms.linux;
+  };
 }

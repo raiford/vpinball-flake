@@ -207,6 +207,10 @@
         system:
         import nixpkgs {
           inherit system;
+          # Required for pinmame: legacy MAME files in the tree carry the
+          # original non-commercial MAME license, so nixpkgs classifies the
+          # package as unfreeRedistributable. Everything else in this flake
+          # is free software.
           config.allowUnfree = true;
           overlays = [ self.overlays.default ];
         }

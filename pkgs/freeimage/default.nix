@@ -30,16 +30,10 @@ stdenv.mkDerivation {
   '';
 
   meta = with lib; {
-    description = "TODO";
-    #homepage = "https://steamdb.info/app/896660/";
-    #changelog = "https://store.steampowered.com/news/app/892970?updates=true";
-    #sourceProvenance = with sourceTypes; [
-    #  binaryBytecode
-    #  binaryNativeCode
-    #];
-    #license = licenses.unfree;
-    #maintainers = with maintainers; [ aidalgol ];
-    #platforms = [ "x86_64-linux" ];
+    description = "Open source image library supporting common graphics file formats (toxieainc fork used by vpinball)";
+    homepage = "https://github.com/toxieainc/freeimage";
+    license = with licenses; [ freeimage gpl2Plus gpl3Plus ];
+    platforms = platforms.linux;
   };
 
 }

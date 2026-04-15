@@ -88,8 +88,9 @@ stdenv.mkDerivation {
   '';
 
   meta = with pkgs.lib; {
-    description = "Visual Pinball Engine";
+    description = "Visual Pinball Engine (open-source pinball simulator)";
     homepage = "https://github.com/vpinball/vpinball";
-    license = licenses.unfree; # Please verify the license. # TODO: fix licenses
+    license = licenses.gpl3Plus;
+    platforms = platforms.linux;
   };
 }

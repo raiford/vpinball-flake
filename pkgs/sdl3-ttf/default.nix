@@ -1,4 +1,5 @@
 {
+  lib,
   stdenv,
   pkgs,
   sdl3,
@@ -26,4 +27,11 @@ stdenv.mkDerivation {
     "-DSDL3_DIR=${sdl3}"
     "-DCMAKE_BUILD_TYPE=Release"
   ];
+
+  meta = with lib; {
+    description = "SDL3 TrueType font rendering library";
+    homepage = "https://github.com/libsdl-org/SDL_ttf";
+    license = licenses.zlib;
+    platforms = platforms.linux;
+  };
 }

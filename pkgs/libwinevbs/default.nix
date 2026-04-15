@@ -42,16 +42,11 @@ stdenv.mkDerivation {
   '';
 
   meta = with lib; {
-    description = "TODO";
-    #homepage = "https://steamdb.info/app/896660/";
-    #changelog = "https://store.steampowered.com/news/app/892970?updates=true";
-    #sourceProvenance = with sourceTypes; [
-    #  binaryBytecode
-    #  binaryNativeCode
-    #];
-    #license = licenses.unfree;
-    #maintainers = with maintainers; [ aidalgol ];
-    #platforms = [ "x86_64-linux" ];
+    description = "Wine-based VBScript (Visual Basic Script) runtime wrapper used by vpinball";
+    homepage = "https://github.com/vpinball/libwinevbs";
+    # No LICENSE file in repo; README states code is from Wine (LGPL-2.1) and ReactOS (GPL-2.0)
+    license = with licenses; [ lgpl21Only gpl2Only ];
+    platforms = platforms.linux;
   };
 
 }

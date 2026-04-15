@@ -21,10 +21,9 @@ rustPlatform.buildRustPackage {
   ];
 
   meta = with lib; {
-    description = "A command line tool to manipulate VPX (Visual Pinball X) files";
+    description = "Command line tool to manipulate VPX (Visual Pinball X) files";
     homepage = "https://github.com/francisdb/vpxtool";
-    license = licenses.mit; # Assuming MIT license based on common Rust projects
-    #maintainers = with maintainers; [ ]; # To be filled by the user if desired
-    platforms = platforms.linux; # Assuming Linux for now
+    license = licenses.mit;
+    platforms = platforms.linux;
   };
 }

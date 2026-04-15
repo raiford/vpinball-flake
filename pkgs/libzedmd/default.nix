@@ -1,4 +1,5 @@
 {
+  lib,
   stdenv,
   pkgs,
   inputs,
@@ -27,4 +28,11 @@ stdenv.mkDerivation {
     "-DPOST_BUILD_COPY_EXT_LIBS=OFF"
     "-DCMAKE_BUILD_TYPE=Release"
   ];
+
+  meta = with lib; {
+    description = "Library to drive the ZeDMD open-source DMD display";
+    homepage = "https://github.com/ppuc/libzedmd";
+    license = licenses.gpl3Only;
+    platforms = platforms.linux;
+  };
 }

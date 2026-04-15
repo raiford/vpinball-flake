@@ -1,4 +1,5 @@
 {
+  lib,
   stdenv,
   inputs,
 }:
@@ -17,4 +18,11 @@ stdenv.mkDerivation {
 
     runHook postInstall
   '';
+
+  meta = with lib; {
+    description = "Header-only utility library for DMD frame manipulation used by libzedmd";
+    homepage = "https://github.com/ppuc/libframeutil";
+    license = licenses.gpl3Only;
+    platforms = platforms.linux;
+  };
 }

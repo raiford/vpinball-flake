@@ -3,10 +3,10 @@
     "bgfx-cmake": {
       "flake": false,
       "locked": {
-        "lastModified": 1774400095,
-        "narHash": "sha256-vVeFE+xw25s3NsqLg66bzs4SVq/vzF7objRbdnRkbvw=",
+        "lastModified": 1776268007,
+        "narHash": "sha256-Fv7Y9ckoyTspAWhHEAujhNIMizzY8zWt4LWyZFu/KLc=",
         "type": "tarball",
-        "url": "https://github.com/bkaradzic/bgfx.cmake/releases/download/v1.142.9197-527/bgfx.cmake.v1.142.9197-527.tar.gz"
+        "url": "https://github.com/bkaradzic/bgfx.cmake/releases/download/v1.143.9216-529/bgfx.cmake.v1.143.9216-529.tar.gz"
       },
       "original": {
         "type": "tarball",
@@ -16,11 +16,11 @@
     "bgfx-patch": {
       "flake": false,
       "locked": {
-        "lastModified": 1775684234,
-        "narHash": "sha256-FcALQzPYDA/yl3+vWGrPE1fQBwmJlTEzWGVqHoR5yXs=",
+        "lastModified": 1776502387,
+        "narHash": "sha256-vK/wPqfnj9trHCYlAdprDif5nGE+St0/4UIO/qFkMtA=",
         "owner": "vbousquet",
         "repo": "bgfx",
-        "rev": "80b36da9f1f10d6c3dc2fdde2ade49c39b6797a6",
+        "rev": "8165b29e5eeb684e8e2f0745a727d3bff2403d06",
         "type": "github"
       },
       "original": {
@@ -112,11 +112,11 @@
     "libdof": {
       "flake": false,
       "locked": {
-        "lastModified": 1776126269,
-        "narHash": "sha256-yNo+J6JmHaHoUuOWYKvom9gxbSH312RZHfU6zNv9qSg=",
+        "lastModified": 1776652294,
+        "narHash": "sha256-TWLZ7p0lKGE94RkrirsRMQq8cz0UP+9O/X3cHikmz5s=",
         "owner": "jsm174",
         "repo": "libdof",
-        "rev": "d5dde461b50e960252be1d96527718d52d931bb8",
+        "rev": "7a61d559bda5bac1e32bb346020866a93963082c",
         "type": "github"
       },
       "original": {
@@ -240,11 +240,11 @@
     "libwinevbs": {
       "flake": false,
       "locked": {
-        "lastModified": 1776128886,
-        "narHash": "sha256-5Xkr9ByfRYcpEqErNhxd+Ss78ntjE5SVEtvhu/uAJiY=",
+        "lastModified": 1776658093,
+        "narHash": "sha256-JJ5pM643DbFqlvnn6eoyKxN1xk0Eg/WmEgjuvyXbLoM=",
         "owner": "vpinball",
         "repo": "libwinevbs",
-        "rev": "18401dee45496fa24673f61287080a86ba261a7d",
+        "rev": "9567899f4d869fc4677ef41fa576a4355f607485",
         "type": "github"
       },
       "original": {
@@ -420,11 +420,11 @@
     "vpinball": {
       "flake": false,
       "locked": {
-        "lastModified": 1776253659,
-        "narHash": "sha256-V6cDPJQq8eAvvQb8DWYTXNtoIhfGCm3VrmoOuILzzWo=",
+        "lastModified": 1776658386,
+        "narHash": "sha256-i315JOt4QUjdYFqblMi1mC1HukxnTEchIApnpqiRt3s=",
         "owner": "vpinball",
         "repo": "vpinball",
-        "rev": "233cd342da80fa9c22cd6d09cc79070c8f12d0c2",
+        "rev": "df9c0c9d19276a229592532ff43959c6cc4520d5",
         "type": "github"
       },
       "original": {

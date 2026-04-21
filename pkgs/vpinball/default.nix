@@ -60,6 +60,10 @@ stdenv.mkDerivation {
   # TODO separate targets for bgfx and gl
   postPatch = ''
     cp make/CMakeLists_bgfx-linux-x64.txt CMakeLists.txt
+ 
+    # Fix Wayland/labwc freezes for secondary windows (like Score View / DMD) by removing the UTILITY flag
+    # which causes them to be treated as unparented popups that get starved of frame callbacks at startup.
+    sed -i 's/wnd_flags |= SDL_WINDOW_UTILITY | SDL_WINDOW_ALWAYS_ON_TOP;/wnd_flags |= SDL_WINDOW_ALWAYS_ON_TOP;/' src/renderer/Window.cpp
   '';
 
   hardeningDisable = [ "format" ];

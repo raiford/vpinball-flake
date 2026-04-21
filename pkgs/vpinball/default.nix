@@ -60,10 +60,14 @@ stdenv.mkDerivation {
   # TODO separate targets for bgfx and gl
   postPatch = ''
     cp make/CMakeLists_bgfx-linux-x64.txt CMakeLists.txt
- 
-    # Fix Wayland/labwc freezes for secondary windows (like Score View / DMD) by removing the UTILITY flag
+
+    # Fix Wayland/labwc freezes for secondary windows (like Score View / DMD) by removing the UTILITY and ALWAYS_ON_TOP flags
     # which causes them to be treated as unparented popups that get starved of frame callbacks at startup.
-    sed -i 's/wnd_flags |= SDL_WINDOW_UTILITY | SDL_WINDOW_ALWAYS_ON_TOP;/wnd_flags |= SDL_WINDOW_ALWAYS_ON_TOP;/' src/renderer/Window.cpp
+    sed -i 's/wnd_flags |= SDL_WINDOW_UTILITY | SDL_WINDOW_ALWAYS_ON_TOP;//' src/renderer/Window.cpp
+
+    # Remove SDL_WINDOW_HIDDEN to ensure the Wayland surface is mapped and receives a configure event 
+    # before BGFX attempts to create the swapchain, which otherwise results in a permanent 0x0 frozen window.
+    sed -i 's/ | SDL_WINDOW_HIDDEN//' src/renderer/Window.cpp
   '';
 
   hardeningDisable = [ "format" ];

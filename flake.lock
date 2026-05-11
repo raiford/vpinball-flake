@@ -3,10 +3,10 @@
     "bgfx-cmake": {
       "flake": false,
       "locked": {
-        "lastModified": 1776268007,
-        "narHash": "sha256-Fv7Y9ckoyTspAWhHEAujhNIMizzY8zWt4LWyZFu/KLc=",
+        "lastModified": 1778036416,
+        "narHash": "sha256-WhKCqdGpEcDchDt/U3q6kKXpPaqLlwsKwyFOeuzwJxM=",
         "type": "tarball",
-        "url": "https://github.com/bkaradzic/bgfx.cmake/releases/download/v1.143.9216-529/bgfx.cmake.v1.143.9216-529.tar.gz"
+        "url": "https://github.com/bkaradzic/bgfx.cmake/releases/download/v1.143.9248-540/bgfx.cmake.v1.143.9248-540.tar.gz"
       },
       "original": {
         "type": "tarball",
@@ -16,11 +16,11 @@
     "bgfx-patch": {
       "flake": false,
       "locked": {
-        "lastModified": 1776502387,
-        "narHash": "sha256-vK/wPqfnj9trHCYlAdprDif5nGE+St0/4UIO/qFkMtA=",
+        "lastModified": 1777921849,
+        "narHash": "sha256-ZuLkhj8Tef8ueEVwPwQnlmDXggfmsa8CEGZSwlUCJtc=",
         "owner": "vbousquet",
         "repo": "bgfx",
-        "rev": "8165b29e5eeb684e8e2f0745a727d3bff2403d06",
+        "rev": "a154992ae43f927710509d1265f72b50589453ec",
         "type": "github"
       },
       "original": {
@@ -80,11 +80,11 @@
     "libaltsound": {
       "flake": false,
       "locked": {
-        "lastModified": 1776128139,
-        "narHash": "sha256-JGzWHKg+wijcy4p17VDEDZ99pe2ztclzQHGexwnJ1L0=",
+        "lastModified": 1778286590,
+        "narHash": "sha256-Iv2kftw5Zmx6jUmbQ+GDO79tGonwR9QyasAM6ZDLdL4=",
         "owner": "vpinball",
         "repo": "libaltsound",
-        "rev": "a380b84e8b5a68e5516c476d8834d98dd72f87b1",
+        "rev": "2fae9021ce2a783dddc4ded3cdf46428dfe7490b",
         "type": "github"
       },
       "original": {
@@ -96,11 +96,11 @@
     "libdmdutil": {
       "flake": false,
       "locked": {
-        "lastModified": 1776127021,
-        "narHash": "sha256-FFK1lhWaHkcS+jxZd6/t86qjRWVmIkJqqLorn2YMRps=",
+        "lastModified": 1778288738,
+        "narHash": "sha256-xHV/YRx18g/6ZDcGXi7MkZHOZnxTlWyTXSopiTmBipQ=",
         "owner": "vpinball",
         "repo": "libdmdutil",
-        "rev": "ef52a335f03aa13b00ebea2e121e1dbc15270de8",
+        "rev": "2573395b42eaa216f8328b41753850deb88b2c8d",
         "type": "github"
       },
       "original": {
@@ -112,11 +112,11 @@
     "libdof": {
       "flake": false,
       "locked": {
-        "lastModified": 1776652294,
-        "narHash": "sha256-TWLZ7p0lKGE94RkrirsRMQq8cz0UP+9O/X3cHikmz5s=",
+        "lastModified": 1778286528,
+        "narHash": "sha256-vDeQa7BDGae0yL6eNjgy0Z92lubJDpvLgO6nV9gF91g=",
         "owner": "jsm174",
         "repo": "libdof",
-        "rev": "7a61d559bda5bac1e32bb346020866a93963082c",
+        "rev": "50af22e1909132993c5106cc64a6834710212da0",
         "type": "github"
       },
       "original": {
@@ -160,11 +160,11 @@
     "libpupdmd": {
       "flake": false,
       "locked": {
-        "lastModified": 1776103966,
-        "narHash": "sha256-3xcXjEQApj4TJsmkk+lcHPo9EXTIetvzi/2dWuF/vso=",
+        "lastModified": 1778286394,
+        "narHash": "sha256-HGRODeS/dhtjTu0b5Ufbs0qxLmTbHOxxeTv0+RiIrvM=",
         "owner": "PPUC",
         "repo": "libpupdmd",
-        "rev": "1e2becff70450e0dd52dbaef767f89728d7957cd",
+        "rev": "4a1123220e6dce73c87cc584494df2ac82cb6f4c",
         "type": "github"
       },
       "original": {
@@ -192,11 +192,11 @@
     "libserum": {
       "flake": false,
       "locked": {
-        "lastModified": 1776104078,
-        "narHash": "sha256-dxrkuPxYmt4fnzsbAgSanInIf+VrROuexDMgKC7/4ww=",
+        "lastModified": 1778286357,
+        "narHash": "sha256-gwl1mPlIbiqCweVHojvgkn6qPLIQVQHaQqhRa88pKYI=",
         "owner": "PPUC",
         "repo": "libserum",
-        "rev": "55939dfe645f6a2e01785bec2cf6d723bf62def4",
+        "rev": "a8cc5ae322e6ecc00b9537bacba2210dc929ccd1",
         "type": "github"
       },
       "original": {
@@ -224,11 +224,11 @@
     "libvni": {
       "flake": false,
       "locked": {
-        "lastModified": 1776104158,
-        "narHash": "sha256-oAyIJ2TFg/Td96vEpCrj0Y3bPiFqRRyAghmoDPOjuJ0=",
+        "lastModified": 1778286334,
+        "narHash": "sha256-oH30xtWI87SRsfKw4JlZPpNg5dZAwN00AUTKuy5xrg8=",
         "owner": "PPUC",
         "repo": "libvni",
-        "rev": "aec04d88f70c3ef642df9f68c4b41c9418fdf704",
+        "rev": "99a4ce0c844af75604546d8a4d0a2f98a485e2db",
         "type": "github"
       },
       "original": {
@@ -240,11 +240,11 @@
     "libwinevbs": {
       "flake": false,
       "locked": {
-        "lastModified": 1776658093,
-        "narHash": "sha256-JJ5pM643DbFqlvnn6eoyKxN1xk0Eg/WmEgjuvyXbLoM=",
+        "lastModified": 1778431760,
+        "narHash": "sha256-ye7tvl13RQVbAEGkTWh3Z3mdcQRxEu8YdZ7840RkAkg=",
         "owner": "vpinball",
         "repo": "libwinevbs",
-        "rev": "9567899f4d869fc4677ef41fa576a4355f607485",
+        "rev": "fdcea821a9b62af4ccd9058309dbc045f9946fe1",
         "type": "github"
       },
       "original": {
@@ -256,11 +256,11 @@
     "libzedmd": {
       "flake": false,
       "locked": {
-        "lastModified": 1776103828,
-        "narHash": "sha256-QIawUNM9dfMCIuaaVbX9YQaZE+2KgxsRlqXddx2goeo=",
+        "lastModified": 1778286302,
+        "narHash": "sha256-ibkjYTKBNr/1mKVRFGD/vjN0h6D+HOrLCB4N81nGlFk=",
         "owner": "PPUC",
         "repo": "libzedmd",
-        "rev": "54cff77a149cef818b76f0ed0762cd255f29088b",
+        "rev": "24044222a83ffed33f93d9f0a0baa68fe9fa5a47",
         "type": "github"
       },
       "original": {
@@ -420,11 +420,11 @@
     "vpinball": {
       "flake": false,
       "locked": {
-        "lastModified": 1776658386,
-        "narHash": "sha256-i315JOt4QUjdYFqblMi1mC1HukxnTEchIApnpqiRt3s=",
+        "lastModified": 1778445610,
+        "narHash": "sha256-PciYkULevQoxOPhX7282uCdjUen6qqAcnoGSm/DJbrM=",
         "owner": "vpinball",
         "repo": "vpinball",
-        "rev": "df9c0c9d19276a229592532ff43959c6cc4520d5",
+        "rev": "5b7c795e0689fdf85ccc55e291c417a86bacd324",
         "type": "github"
       },
       "original": {

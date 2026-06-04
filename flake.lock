@@ -420,11 +420,11 @@
     "vpinball": {
       "flake": false,
       "locked": {
-        "lastModified": 1780422814,
-        "narHash": "sha256-Xwr2YAj7FZShQbae0kIErkR/HosWgmkUqQl8m1aARK4=",
+        "lastModified": 1780560290,
+        "narHash": "sha256-JxJw154N6/I4rA3Yqp8JNFvKB8VzXLNKkF7cZN9MBYo=",
         "owner": "vpinball",
         "repo": "vpinball",
-        "rev": "9ff5f74b1199b978ed0367fd3b7d6c433ce18ffb",
+        "rev": "f46805aeb273c6d24ab73a8f2e2c368991a9c720",
         "type": "github"
       },
       "original": {

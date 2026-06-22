@@ -16,6 +16,7 @@ stdenv.mkDerivation {
 
   buildInputs = with pkgs; [
     zlib
+    libframeutil
     libzedmd
     libserum
     libpupdmd

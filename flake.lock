@@ -3,10 +3,10 @@
     "bgfx-cmake": {
       "flake": false,
       "locked": {
-        "lastModified": 1781712719,
-        "narHash": "sha256-y5IgWnt/CLvGu/806iYo61BNd7Y3YcK5i0c/OGTxKFE=",
+        "lastModified": 1782738159,
+        "narHash": "sha256-0rTXpp1nWlCAUxoYhSkTQc/0ZM2DBarCBpw+2GivHlU=",
         "type": "tarball",
-        "url": "https://github.com/bkaradzic/bgfx.cmake/releases/download/v1.146.9305-549/bgfx.cmake.v1.146.9305-549.tar.gz"
+        "url": "https://github.com/bkaradzic/bgfx.cmake/releases/download/v1.147.9336-554/bgfx.cmake.v1.147.9336-554.tar.gz"
       },
       "original": {
         "type": "tarball",
@@ -16,11 +16,11 @@
     "bgfx-patch": {
       "flake": false,
       "locked": {
-        "lastModified": 1781719445,
-        "narHash": "sha256-TNNEZMOfruGh0ufAEpvCUrjuRXXj4a7Glp0CMPkQ/VE=",
+        "lastModified": 1782738995,
+        "narHash": "sha256-ApbBe6NTb8AHwrQnuA6qaKg905yMgIF/csXYLRKTGwA=",
         "owner": "vbousquet",
         "repo": "bgfx",
-        "rev": "6e19baffc93ba834bb53929dd3ff4ea909a2ace2",
+        "rev": "8aeab38ecde4f979a56b066a315318271443b7bd",
         "type": "github"
       },
       "original": {
@@ -304,11 +304,11 @@
     "pinmame": {
       "flake": false,
       "locked": {
-        "lastModified": 1778753147,
-        "narHash": "sha256-UfEIechtJBFHExM+HGXW9Phxqdl0IhN9jdJlriBreOM=",
+        "lastModified": 1782751998,
+        "narHash": "sha256-tG2vJ0sBPwd5NXLSS7pDq/1XZK0/uPkFTasWgDr7JhM=",
         "owner": "vbousquet",
         "repo": "pinmame",
-        "rev": "8b143198c4f07645db39a4cb4cf7f332702673d0",
+        "rev": "1f2cad4716f25d61887869caf1d28a71389911a9",
         "type": "github"
       },
       "original": {
@@ -420,11 +420,11 @@
     "vpinball": {
       "flake": false,
       "locked": {
-        "lastModified": 1782155786,
-        "narHash": "sha256-Zgb4jXVOIhFYBV4M02aaTz+YaxrRH0CDiKtQBJ6P99Q=",
+        "lastModified": 1782752239,
+        "narHash": "sha256-HfqreGx3iuozryDk+lkq/9s7j/y4/jlatKf4iPewyzs=",
         "owner": "vpinball",
         "repo": "vpinball",
-        "rev": "8fb99c4865e3917873fe8e6e1e1d7c7e3b8169be",
+        "rev": "a569fde9a814b35a6f756eb04e306c61ca9e52ed",
         "type": "github"
       },
       "original": {

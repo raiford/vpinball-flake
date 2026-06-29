@@ -57,11 +57,6 @@ stdenv.mkDerivation {
     libxtst
   ];
 
-  # TODO separate targets for bgfx and gl
-  postPatch = ''
-    cp make/CMakeLists_bgfx-linux-x64.txt CMakeLists.txt
-  '';
-
   hardeningDisable = [ "format" ];
 
   cmakeFlags = [

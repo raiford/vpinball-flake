@@ -240,11 +240,11 @@
     "libwinevbs": {
       "flake": false,
       "locked": {
-        "lastModified": 1781304215,
-        "narHash": "sha256-3kGx35IAICIgS0D1I5UTrDxfC1lrwPaSWwBOydFCy9E=",
+        "lastModified": 1782766788,
+        "narHash": "sha256-NBnCnSoKWz495gfWK18+YjkHpGhMr3Vj9QK11XRV3+k=",
         "owner": "vpinball",
         "repo": "libwinevbs",
-        "rev": "8ce73e202a4971ad3e08d91c694ea7ca0fe81ed6",
+        "rev": "1f536d35319205be97e9d7a5e1d3a3d7a275c6d6",
         "type": "github"
       },
       "original": {
@@ -304,11 +304,11 @@
     "pinmame": {
       "flake": false,
       "locked": {
-        "lastModified": 1782751998,
-        "narHash": "sha256-tG2vJ0sBPwd5NXLSS7pDq/1XZK0/uPkFTasWgDr7JhM=",
+        "lastModified": 1783602166,
+        "narHash": "sha256-8h7EYGGCJ63DoM8eSsQr5TqtSFlis8ZazrdPk+kvG/M=",
         "owner": "vbousquet",
         "repo": "pinmame",
-        "rev": "1f2cad4716f25d61887869caf1d28a71389911a9",
+        "rev": "6bf85dfcf2d00e3774c0da1f7823c05ea75c44d9",
         "type": "github"
       },
       "original": {
@@ -420,11 +420,11 @@
     "vpinball": {
       "flake": false,
       "locked": {
-        "lastModified": 1782752239,
-        "narHash": "sha256-HfqreGx3iuozryDk+lkq/9s7j/y4/jlatKf4iPewyzs=",
+        "lastModified": 1783603834,
+        "narHash": "sha256-FuweRNH5kPsvVD3MoTHuQJPrdj2jYQruRjJnT3h1Y/E=",
         "owner": "vpinball",
         "repo": "vpinball",
-        "rev": "a569fde9a814b35a6f756eb04e306c61ca9e52ed",
+        "rev": "2e0ba2c0bf3b6fed775e29a12807078a461e3296",
         "type": "github"
       },
       "original": {

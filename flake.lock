@@ -369,15 +369,17 @@
       "flake": false,
       "locked": {
         "allRefs": true,
-        "lastModified": 1775333110,
-        "narHash": "sha256-4VXaY62hLz+egOyKJMltfX9jDel53+x1DKLFOBINK9Q=",
-        "rev": "96a73a551a857b7c8d0ca3cc553a266eabbab6a7",
-        "revCount": 1996,
+        "lastModified": 1775501936,
+        "narHash": "sha256-sXtz+HxbezYdea4oVjymfcDTTVIYtWQH/fcCWLNly0M=",
+        "ref": "refs/heads/main",
+        "rev": "1aedddcbd205c4e1ea0f99fdb2c785acc8e2489b",
+        "revCount": 2009,
         "submodules": true,
         "type": "git",
         "url": "https://github.com/libsdl-org/SDL_image"
       },
       "original": {
+        "allRefs": true,
         "submodules": true,
         "type": "git",
         "url": "https://github.com/libsdl-org/SDL_image"
@@ -387,15 +389,17 @@
       "flake": false,
       "locked": {
         "allRefs": true,
-        "lastModified": 1743443850,
-        "narHash": "sha256-1Gc71BRs6WcPpS2iNXPoCVaPP8dxH/fQ6tyeeqZC09k=",
-        "rev": "a1ce3670aec736ecbf0936c43f2f0cc53aa61e5b",
-        "revCount": 1210,
+        "lastModified": 1774707116,
+        "narHash": "sha256-Nca5Y/5gEb84NXMv5PqkHauKPuuSXsh1X3if/nKK7kA=",
+        "ref": "refs/heads/main",
+        "rev": "de8c8a3380cca39cb30331576228c20d68a30424",
+        "revCount": 1284,
         "submodules": true,
         "type": "git",
         "url": "https://github.com/libsdl-org/SDL_ttf"
       },
       "original": {
+        "allRefs": true,
         "submodules": true,
         "type": "git",
         "url": "https://github.com/libsdl-org/SDL_ttf"

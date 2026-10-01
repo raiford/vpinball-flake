@@ -12,6 +12,7 @@ stdenv.mkDerivation {
 
   nativeBuildInputs = with pkgs; [
     cmake
+    libframeutil
   ];
 
   cmakeFlags = [

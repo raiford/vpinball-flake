@@ -10,4 +10,4 @@ update-commit commit:
   nix develop '.#updateInputs'
 
 build:
-  nix build .
+  nix build --show-trace .

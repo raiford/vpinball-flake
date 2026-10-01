@@ -14,28 +14,6 @@ stdenv.mkDerivation {
 
   # Pull the cmake src and copy the patched bgfx version into it later.
   srcs = [
-    #(fetchFromGitHub {
-    #  owner = bgfx-cmake.owner;
-    #  repo = bgfx-cmake.repo;
-    #  rev = bgfx-cmake.rev;
-    #  hash = bgfx-cmake.hash;
-    #})
-    #(fetchFromGitHub {
-    #  owner = bgfx-patch.owner;
-    #  repo = bgfx-patch.repo;
-    #  rev = bgfx-patch.rev;
-    #  hash = bgfx-patch.hash;
-    #})
-    #(bgfx-cmake // {name = "bgfx-cmake";})
-    #(bgfx-patch // {name = "bgfx-patch";})
-    #({
-    #  name = "bgfx-cmake";
-    #  src = bgfx-cmake.outPath;
-    #})
-    #({
-    #  name = "bgfx-patch";
-    #  src = bgfx-patch.outPath;
-    #})
     (builtins.path {path =bgfx-patch.outPath; name = "bgfx-patch";})
     (builtins.path {path =bgfx-cmake.outPath; name = "bgfx.cmake";})
   ] ;
@@ -68,6 +46,23 @@ stdenv.mkDerivation {
     "-DBGFX_CONFIG_MAX_FRAME_BUFFERS=256"
     "-DCMAKE_BUILD_TYPE=${buildType}"
   ];
+
+  installPhase = ''
+    runHook preInstall
+
+    mkdir -p $out/lib
+    mkdir -p $out/include
+
+    cp -a cmake/bgfx/libbgfx.so $out/lib
+    cp cmake/bimg/libbimg_encode.a $out/lib
+
+    cp -r ../bgfx/include/bgfx $out/include
+    cp -r ../bimg/include/bimg $out/include
+    cp -r ../bx/include/bx $out/include
+
+    runHook postInstall
+  '';
+
 
   meta = with lib; {
     description = "Cross-platform rendering library (bgfx.cmake build with vpinball's patched bgfx)";

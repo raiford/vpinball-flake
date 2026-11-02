@@ -2,13 +2,14 @@
 {
   stdenv,
   pkgs,
+  lib,
   inputs,
   buildType ? "Release"
 }:
 stdenv.mkDerivation {
   pname = "vpinball";
-  # TODO: what should the version be based on?  10.8.X?
-  version = "unstable";
+  # Version reflects the pinned upstream commit, e.g. "unstable-1a2b3c".
+  version = "unstable-${lib.strings.substring 0 6 inputs.vpinball.rev}";
 
   src = inputs.vpinball;
 

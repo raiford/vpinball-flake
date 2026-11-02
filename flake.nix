@@ -29,6 +29,7 @@
       owner = "superhac";
       repo = "vpinfe";
       flake = false;
+      ref = "v2.6.6";
     };
 
     vpxtool = {
@@ -57,8 +58,16 @@
         bgfx-cmake = inputs.bgfx-cmake;
       };
 
+      # vpinfe release tag pinned by scripts/update_vpinfe.sh (from flake.lock).
+      # Null when the input is not pinned to a tag.
+      vpinfeRelease =
+        let
+          lock = builtins.fromJSON (builtins.readFile (self.sourceInfo.outPath + "/flake.lock"));
+        in
+          lock.nodes.vpinfe.original.ref or null;
+
       # Merged inputs accessible by derivations in pkgs/
-      allInputs = inputs // upstreamSources;
+      allInputs = inputs // upstreamSources // { inherit vpinfeRelease; };
 
       customPackages = final: prev: {
         bgfx = final.callPackage ./pkgs/bgfx {
@@ -194,27 +203,6 @@
               pkg-config
               gdb
             ];
-          };
-
-          # Backwards-compatibility shells (informative since SHAs are now parsed dynamically)
-          updateInputs = pkgs.mkShell {
-            shellHook = ''
-              echo "✅ Pattern 3 is active: upstream dependency SHAs are parsed automatically in pure Nix from platforms/config.sh."
-              echo "To bump upstream vpinball, simply run: nix flake update vpinball"
-              exit 0
-            '';
-          };
-          updateDirectInputs = pkgs.mkShell {
-            shellHook = ''
-              echo "✅ Direct inputs are parsed automatically in pure Nix from vpinball/platforms/config.sh."
-              exit 0
-            '';
-          };
-          updateChildInputs = pkgs.mkShell {
-            shellHook = ''
-              echo "✅ Child inputs are parsed automatically in pure Nix from dependency platforms/config.sh files."
-              exit 0
-            '';
           };
         }
       );

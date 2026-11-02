@@ -58,15 +58,16 @@
     "vpinfe": {
       "flake": false,
       "locked": {
-        "lastModified": 1778590693,
-        "narHash": "sha256-annTJVoPh4o77N2M+u246UIJ+55or0WB+TatMgqnffo=",
+        "lastModified": 1791413859,
+        "narHash": "sha256-DOzpzq8IguNI9WbR6ckXtxkjADkGo6LHaSo8acvXSJw=",
         "owner": "superhac",
         "repo": "vpinfe",
-        "rev": "6ea7cce0568806739c589cb267735629b58ea7e2",
+        "rev": "d7fdf772ad82c103f50b66564d963417177d1b90",
         "type": "github"
       },
       "original": {
         "owner": "superhac",
+        "ref": "v2.6.6",
         "repo": "vpinfe",
         "type": "github"
       }

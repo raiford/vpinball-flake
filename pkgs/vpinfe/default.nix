@@ -8,7 +8,9 @@ let
 in
 pythonPackages.buildPythonPackage {
   pname = "vpinfe";
-  version = "unstable-2026-02-23";
+  # Release tag pinned by scripts/update_vpinfe (e.g. "v2.6.6" -> "2.6.6");
+  # falls back to the short commit hash when the input is not tag-pinned.
+  version = lib.removePrefix "v" (inputs.vpinfeRelease or inputs.vpinfe.shortRev);
 
   format = "other";
 

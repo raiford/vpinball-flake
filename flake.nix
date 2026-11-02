@@ -18,168 +18,9 @@
       flake = false;
     };
 
-    #https://github.com/vpinball/vpinball/blob/master/platforms/config.sh
-    libdmdutil = {
-      type = "github";
-      owner = "vpinball";
-      repo = "libdmdutil";
-      flake = false;
-    };
-    libwinevbs = {
-      type = "github";
-      owner = "vpinball";
-      repo = "libwinevbs";
-      flake = false;
-    };
-    freeimage = {
-      type = "github";
-      owner = "toxieainc";
-      repo = "freeimage";
-      flake = false;
-    };
     bgfx-cmake = {
-      # We have to use this url path to get it to fetch submodules
       type = "tarball";
-      url = "https://github.com/bkaradzic/bgfx.cmake/releases/download/v1.136.9135-511/bgfx.cmake.v1.136.9135-511.tar.gz";
-      #submodules = true;
-      #type = "github";
-      #owner = "bkaradzic";
-      #repo = "bgfx.cmake";
-      #ref = "v1.136.9135-511";
-      flake = false;
-    };
-    bgfx-patch = {
-      type = "github";
-      owner = "vbousquet";
-      repo = "bgfx";
-      flake = false;
-    };
-    pinmame = {
-      type = "github";
-      owner = "vbousquet";
-      repo = "pinmame";
-      flake = false;
-    };
-    libaltsound = {
-      type = "github";
-      owner = "vpinball";
-      repo = "libaltsound";
-      flake = false;
-    };
-    libdof = {
-      type = "github";
-      owner = "jsm174";
-      repo = "libdof";
-      flake = false;
-    };
-    sdl3 = {
-      type = "github";
-      owner = "libsdl-org";
-      repo = "SDL";
-      flake = false;
-    };
-    # sdl3-image and sdl3-ttf are fetched via `type = "git"` with
-    # submodules = true so that their vendored format libraries
-    # (zlib/libpng/libjpeg for image; freetype/harfbuzz for ttf) come
-    # down with the source. Matching what upstream vpinball is tested
-    # against avoids font rendering / image decode drift that can
-    # result from nixpkgs version skew.
-    sdl3-image = {
-      type = "git";
-      url = "https://github.com/libsdl-org/SDL_image";
-      submodules = true;
-      flake = false;
-    };
-    sdl3-ttf = {
-      type = "git";
-      url = "https://github.com/libsdl-org/SDL_ttf";
-      submodules = true;
-      flake = false;
-    };
-    libzip = {
-      type = "github";
-      owner = "nih-at";
-      repo = "libzip";
-      flake = false;
-    };
-
-    # Disabled to use ffmpeg from upstream nixpkgs.
-    #ffmpeg = {
-    #  type = "github";
-    #  owner = "FFmpeg";
-    #  repo = "FFmpeg";
-    #  flake = false;
-    #};
-
-    # https://github.com/vpinball/libdmdutil/blob/master/platforms/config.sh
-    libusb = {
-      type = "github";
-      owner = "libusb";
-      repo = "libusb";
-      flake = false;
-    };
-    libzedmd = {
-      type = "github";
-      owner = "ppuc";
-      repo = "libzedmd";
-      flake = false;
-    };
-    libserum = {
-      type = "github";
-      owner = "ppuc";
-      repo = "libserum_concentrate";
-      flake = false;
-    };
-    libpupdmd = {
-      type = "github";
-      owner = "ppuc";
-      repo = "libpupdmd";
-      flake = false;
-    };
-    libvni = {
-      type = "github";
-      owner = "PPUC";
-      repo = "libvni";
-      flake = false;
-    };
-
-    # https://github.com/PPUC/libzedmd/blob/main/platforms/config.sh
-    sockpp = {
-      type = "github";
-      owner = "fpagliughi";
-      repo = "sockpp";
-      flake = false;
-    };
-    cargs = {
-      type = "github";
-      owner = "likle";
-      repo = "cargs";
-      flake = false;
-    };
-    libframeutil = {
-      type = "github";
-      owner = "ppuc";
-      repo = "libframeutil";
-      flake = false;
-    };
-    libserialport = {
-      type = "github";
-      owner = "sigrokproject";
-      repo = "libserialport";
-      flake = false;
-    };
-
-    # https://github.com/jsm174/libdof/blob/master/platforms/config.sh
-    libftdi = {
-      type = "github";
-      owner = "jsm174";
-      repo = "libftdi";
-      flake = false;
-    };
-    hidapi = {
-      type = "github";
-      owner = "libusb";
-      repo = "hidapi";
+      url = "https://github.com/bkaradzic/bgfx.cmake/releases/download/v1.167.9605-606/bgfx.cmake.v1.167.9605-606.tar.gz";
       flake = false;
     };
 
@@ -206,46 +47,54 @@
       ...
     }:
     let
-
       supportedSystems = [ "x86_64-linux" ];
 
       forAllSystems = nixpkgs.lib.genAttrs supportedSystems;
 
+      # Pure Nix extraction and git fetch of upstream dependency SHAs
+      upstreamSources = import ./upstream-sources.nix {
+        vpinball = inputs.vpinball;
+        bgfx-cmake = inputs.bgfx-cmake;
+      };
+
+      # Merged inputs accessible by derivations in pkgs/
+      allInputs = inputs // upstreamSources;
+
       customPackages = final: prev: {
         bgfx = final.callPackage ./pkgs/bgfx {
-          bgfx-cmake = inputs.bgfx-cmake;
-          bgfx-patch = inputs.bgfx-patch;
+          bgfx-cmake = allInputs.bgfx-cmake;
+          bgfx-patch = allInputs.bgfx-patch;
         };
-        cargs = final.callPackage ./pkgs/cargs { inherit inputs; };
-        freeimage = final.callPackage ./pkgs/freeimage { inherit inputs; };
-        libaltsound = final.callPackage ./pkgs/libaltsound { inherit inputs; };
-        libdmdutil = final.callPackage ./pkgs/libdmdutil { inherit inputs; };
-        libwinevbs = final.callPackage ./pkgs/libwinevbs { inherit inputs; };
-        libdof = final.callPackage ./pkgs/libdof { inherit inputs; };
-        libframeutil = final.callPackage ./pkgs/libframeutil { inherit inputs; };
-        libpupdmd = final.callPackage ./pkgs/libpupdmd { inherit inputs; };
-        libserum = final.callPackage ./pkgs/libserum { inherit inputs; };
-        libzedmd = final.callPackage ./pkgs/libzedmd { inherit inputs; };
-        pinmame = final.callPackage ./pkgs/pinmame { inherit inputs; };
-        sockpp = final.callPackage ./pkgs/sockpp { inherit inputs; };
-        libusb = final.callPackage ./pkgs/libusb { inherit inputs; };
-        libvni = final.callPackage ./pkgs/libvni { inherit inputs; };
-        libftdi = final.callPackage ./pkgs/libftdi { inherit inputs; };
-        libserialport = final.callPackage ./pkgs/libserialport { inherit inputs; };
-        hidapi = final.callPackage ./pkgs/hidapi { inherit inputs; };
+        cargs = final.callPackage ./pkgs/cargs { inputs = allInputs; };
+        freeimage = final.callPackage ./pkgs/freeimage { inputs = allInputs; };
+        libaltsound = final.callPackage ./pkgs/libaltsound { inputs = allInputs; };
+        libdmdutil = final.callPackage ./pkgs/libdmdutil { inputs = allInputs; };
+        libwinevbs = final.callPackage ./pkgs/libwinevbs { inputs = allInputs; };
+        libdof = final.callPackage ./pkgs/libdof { inputs = allInputs; };
+        libframeutil = final.callPackage ./pkgs/libframeutil { inputs = allInputs; };
+        libpupdmd = final.callPackage ./pkgs/libpupdmd { inputs = allInputs; };
+        libserum = final.callPackage ./pkgs/libserum { inputs = allInputs; };
+        libzedmd = final.callPackage ./pkgs/libzedmd { inputs = allInputs; };
+        pinmame = final.callPackage ./pkgs/pinmame { inputs = allInputs; };
+        sockpp = final.callPackage ./pkgs/sockpp { inputs = allInputs; };
+        libusb = final.callPackage ./pkgs/libusb { inputs = allInputs; };
+        libvni = final.callPackage ./pkgs/libvni { inputs = allInputs; };
+        libftdi = final.callPackage ./pkgs/libftdi { inputs = allInputs; };
+        libserialport = final.callPackage ./pkgs/libserialport { inputs = allInputs; };
+        hidapi = final.callPackage ./pkgs/hidapi { inputs = allInputs; };
 
         # SDL has a lot of custom build options in upstream nixpkgs for audio and video stuff.
         # If necessary to force support for wayland you can add a .override to these to enable waylandSupport
         sdl3 = prev.sdl3.overrideAttrs (old: {
-          src = inputs.sdl3;
+          src = allInputs.sdl3;
           version = "";
         });
         sdl3-ttf = prev.sdl3-ttf.overrideAttrs (old: {
-          src = inputs.sdl3-ttf;
+          src = allInputs.sdl3-ttf;
           version = "";
         });
         sdl3-image = prev.sdl3-image.overrideAttrs (old: {
-          src = inputs.sdl3-image;
+          src = allInputs.sdl3-image;
           version = "";
         });
       };
@@ -264,6 +113,12 @@
       );
     in
     {
+      legacyPackages = forAllSystems (
+        system: {
+          sources = upstreamSources;
+          inherit (upstreamSources) configs;
+        }
+      );
 
       overlays.default = final: prev: customPackages final prev;
 
@@ -283,20 +138,22 @@
                   pkgs.extend (
                     final: prev:
                     pkgs.lib.genAttrs customNames (
-                      name: if prev.${name} ? override then prev.${name}.override { inherit buildType; } else prev.${name}
+                      name:
+                        if prev.${name} ? override && (prev.${name}.override.__functionArgs.buildType or false)
+                        then prev.${name}.override { inherit buildType; }
+                        else prev.${name}
                     )
                   );
             in
-            relevantPkgs.callPackage ./pkgs/vpinball { inherit inputs buildType; };
+            relevantPkgs.callPackage ./pkgs/vpinball { inputs = allInputs; inherit buildType; };
         in
         {
-
           vpinball = makeVPinball "Release";
           vpinball-debug = makeVPinball "Debug";
 
-          vpinfe = pkgs.callPackage ./pkgs/vpinfe { inherit inputs; };
-          vpxtool = pkgs.callPackage ./pkgs/vpxtool { inherit inputs; };
-          vpx-editor = pkgs.callPackage ./pkgs/vpx-editor { inherit inputs; };
+          vpinfe = pkgs.callPackage ./pkgs/vpinfe { inputs = allInputs; };
+          vpxtool = pkgs.callPackage ./pkgs/vpxtool { inputs = allInputs; };
+          vpx-editor = pkgs.callPackage ./pkgs/vpx-editor { inputs = allInputs; };
 
           default = self.packages.${system}.vpinball;
         }
@@ -306,160 +163,40 @@
         system:
         let
           pkgs = pkgsFor.${system};
-
-          updateInputs = pkgs.mkShell {
-
-            shellHook = ''
-              nix develop .#updateDirectInputs
-              nix develop .#updateChildInputs
-              exit
-            '';
-          };
-
-          # Updates inputs with SHA hashes from config.sh in the vpinball repo.
-          updateDirectInputs = pkgs.mkShell {
-
-            shellHook = ''
-              if [ -f "${inputs.vpinball}/platforms/config.sh" ]; then
-                source "${inputs.vpinball}/platforms/config.sh"
-
-                echo "Updating SHA hashes from config.sh"
-
-                echo "Updating sdl3: ''${SDL_SHA}"
-                nix flake update sdl3 --override-input sdl3 github:libsdl-org/SDL/''${SDL_SHA}
-
-                # Use git+ URLs so submodules=true from the flake input
-                # is preserved across overrides. The github: shorthand
-                # silently drops the submodules flag, which breaks the
-                # vendored SDL_image/SDL_ttf builds.
-                echo "Updating sdl3-ttf: ''${SDL_TTF_SHA}"
-                nix flake update sdl3-ttf --override-input sdl3-ttf "git+https://github.com/libsdl-org/SDL_ttf?submodules=1&allRefs=1&rev=''${SDL_TTF_SHA}"
-
-                echo "Updating sdl3-image: ''${SDL_IMAGE_SHA}"
-                nix flake update sdl3-image --override-input sdl3-image "git+https://github.com/libsdl-org/SDL_image?submodules=1&allRefs=1&rev=''${SDL_IMAGE_SHA}"
-
-                echo "Updating freeimage: ''${FREEIMAGE_SHA}"
-                nix flake update freeimage --override-input freeimage github:toxieainc/freeimage/''${FREEIMAGE_SHA}
-
-                echo "Updating libaltsound: ''${LIBALTSOUND_SHA}"
-                nix flake update libaltsound --override-input libaltsound github:vpinball/libaltsound/''${LIBALTSOUND_SHA}
-
-                echo "Updating bgfx-patch: ''${BGFX_PATCH_SHA}"
-                nix flake update bgfx-patch --override-input bgfx-patch github:vbousquet/bgfx/''${BGFX_PATCH_SHA}
-
-                echo "Updating bgfx.cmake: ''${BGFX_CMAKE_VERSION}"
-                nix flake update bgfx-cmake --override-input bgfx-cmake https://github.com/bkaradzic/bgfx.cmake/releases/download/v''${BGFX_CMAKE_VERSION}/bgfx.cmake.v''${BGFX_CMAKE_VERSION}.tar.gz
-
-                echo "Updating pinmame: ''${PINMAME_SHA}"
-                nix flake update pinmame --override-input pinmame github:vbousquet/pinmame/''${PINMAME_SHA}
-
-                echo "Updating libdmdutil: ''${LIBDMDUTIL_SHA}"
-                nix flake update libdmdutil --override-input libdmdutil github:vpinball/libdmdutil/''${LIBDMDUTIL_SHA}
-
-                echo "Updating libwinevbs: ''${LIBWINEVBS_SHA}"
-                nix flake update libwinevbs --override-input libwinevbs github:vpinball/libwinevbs/''${LIBWINEVBS_SHA}
-
-                echo "Updating libdof: ''${LIBDOF_SHA}"
-                nix flake update libdof --override-input libdof github:jsm174/libdof/''${LIBDOF_SHA}
-
-                #echo "Updating ffmpeg: ''${FFMPEG_SHA}"
-                #nix flake update ffmpeg --override-input ffmpeg github:FFmpeg/FFmpeg/''${FFMPEG_SHA}
-
-                echo "Updating libzip: ''${LIBZIP_SHA}"
-                nix flake update libzip --override-input libzip github:nih-at/libzip/''${LIBZIP_SHA}
-
-
-                echo "✅ Updated the flake inputs from main config.sh"
-              else
-                echo "⚠️  Could not find config.sh in the 'vpinball' input. Please adjust the path in flake.nix."
-              fi
-
-              exit
-            '';
-          };
-
-          # Updates inputs from SHA hashes defined in dependency repos.
-          updateChildInputs = pkgs.mkShell {
-
-            # This hook runs after the shell is built and ready.
-            shellHook = ''
-              # This hook updates the flake.lock hashes from the config.sh script in the main vpinball repo.
-              echo "Updating SHA hashes from libdmdutil"
-              if [ -f "${inputs.libdmdutil}/platforms/config.sh" ]; then
-                source "${inputs.libdmdutil}/platforms/config.sh"
-
-                # TODO: libusb conflict
-                echo "Updating libusb: ''${LIBUSB_SHA}"
-                nix flake update libusb --override-input libusb github:libusb/libusb/''${LIBUSB_SHA}
-
-                echo "Updating libzedmd: ''${LIBZEDMD_SHA}"
-                nix flake update libzedmd --override-input libzedmd github:PPUC/libzedmd/''${LIBZEDMD_SHA}
-                echo "Updating libserum: ''${LIBSERUM_SHA}"
-                nix flake update libserum --override-input libserum github:PPUC/libserum/''${LIBSERUM_SHA}
-                echo "Updating libpupdmd: ''${LIBPUPDMD_SHA}"
-                nix flake update libpupdmd --override-input libpupdmd github:PPUC/libpupdmd/''${LIBPUPDMD_SHA}
-                echo "Updating libvni: ''${LIBVNI_SHA}"
-                nix flake update libvni --override-input libvni github:PPUC/libvni/''${LIBVNI_SHA}
-                OLD_LIBUSB_SHA="''${LIBUSB_SHA}"
-
-                echo "✅ Updated the flake inputs from libdmdutil"
-              else
-                echo "⚠️  Could not find config.sh in the 'libdmdutil' input. Please adjust the path in flake.nix."
-              fi
-
-              echo "Updating SHA hashes from libdof"
-              if [ -f "${inputs.libdof}/platforms/config.sh" ]; then
-                source "${inputs.libdof}/platforms/config.sh"
-
-                if [ "''${OLD_LIBUSB_SHA}" != "''${LIBUSB_SHA}" ]; then
-                  echo "⚠️ Error: libusb hash mismatch" >&2
-                  #exit 1
-                fi
-
-                echo "Updating libserialport: ''${LIBSERIALPORT_SHA}"
-                nix flake update libserialport --override-input libserialport github:sigrokproject/libserialport/''${LIBSERIALPORT_SHA}
-                echo "Updating hidapi: ''${HIDAPI_SHA}"
-                nix flake update hidapi --override-input hidapi github:libusb/hidapi/''${HIDAPI_SHA}
-                echo "Updating libftdi: ''${LIBFTDI_SHA}"
-                nix flake update libftdi --override-input libftdi github:jsm174/libftdi/''${LIBFTDI_SHA}
-                OLD_LIBSERIALPORT_SHA="''${LIBSERIALPORT_SHA}"
-
-                echo "✅ Updated the flake inputs from libdof"
-              else
-                echo "⚠️  Could not find config.sh in the 'libdof' input. Please adjust the path in flake.nix."
-              fi
-
-              echo "Updating SHA hashes from libzedmd"
-              if [ -f "${inputs.libzedmd}/platforms/config.sh" ]; then
-                source "${inputs.libzedmd}/platforms/config.sh"
-
-                if [ "''${OLD_LIBSERIALPORT_SHA}" != "''${LIBSERIALPORT_SHA}" ]; then
-                  echo "⚠️ Error: libserialport hash mismatch" >&2
-                  exit 1
-                fi
-
-                echo "Updating cargs: ''${CARGS_SHA}"
-                nix flake update cargs --override-input cargs github:likle/cargs/''${CARGS_SHA}
-                echo "Updating libframeutil: ''${LIBFRAMEUTIL_SHA}"
-                nix flake update libframeutil --override-input libframeutil github:ppuc/libframeutil/''${LIBFRAMEUTIL_SHA}
-                echo "Updating sockpp: ''${SOCKPP_SHA}"
-                nix flake update sockpp --override-input sockpp github:fpagliughi/sockpp/''${SOCKPP_SHA}
-
-                echo "✅ Updated the flake inputs from libzedmd"
-              else
-                echo "⚠️  Could not find config.sh in the 'libzedmd' input. Please adjust the path in flake.nix."
-              fi
-
-              exit
-            '';
-          };
         in
         {
-          #default = updateDirectInputs;
+          # Default shell provides a proper dev environment for working on vpinball
+          default = pkgs.mkShell {
+            inputsFrom = [ self.packages.${system}.vpinball ];
+            packages = with pkgs; [
+              git
+              cmake
+              ninja
+              pkg-config
+              gdb
+            ];
+          };
 
-          inherit updateInputs;
-          inherit updateDirectInputs;
-          inherit updateChildInputs;
+          # Backwards-compatibility shells (informative since SHAs are now parsed dynamically)
+          updateInputs = pkgs.mkShell {
+            shellHook = ''
+              echo "✅ Pattern 3 is active: upstream dependency SHAs are parsed automatically in pure Nix from platforms/config.sh."
+              echo "To bump upstream vpinball, simply run: nix flake update vpinball"
+              exit 0
+            '';
+          };
+          updateDirectInputs = pkgs.mkShell {
+            shellHook = ''
+              echo "✅ Direct inputs are parsed automatically in pure Nix from vpinball/platforms/config.sh."
+              exit 0
+            '';
+          };
+          updateChildInputs = pkgs.mkShell {
+            shellHook = ''
+              echo "✅ Child inputs are parsed automatically in pure Nix from dependency platforms/config.sh files."
+              exit 0
+            '';
+          };
         }
       );
     };

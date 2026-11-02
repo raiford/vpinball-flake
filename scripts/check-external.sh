@@ -23,12 +23,11 @@ cd "$FLAKE_ROOT"
 
 die() { echo "error: $*" >&2; exit 2; }
 
-# Resolve a flake input's store path. Uses builtins.getFlake so it works
-# even for non-flake inputs like vpinball (flake = false).
+# Resolve a source path (from flake inputs or dynamically resolved sources).
 input_path() {
   local name="$1"
   nix eval --raw --impure --expr \
-    "(builtins.getFlake (toString ./.)).inputs.${name}.outPath" \
+    "let flake = builtins.getFlake (toString ./.); in (flake.inputs.${name}.outPath or flake.legacyPackages.x86_64-linux.sources.${name}.outPath)" \
     2>/dev/null || die "failed to resolve input '${name}'"
 }
 
@@ -59,12 +58,10 @@ used_vars() {
   comm -12 <(extract_vars "$config") <(extract_refs "$ext")
 }
 
-# Extract all *_SHA / *_VERSION names referenced by flake.nix update hooks.
-# Filters out OLD_* shell-local shadow variables used by updateChildInputs
-# for hash-mismatch detection — they're not real upstream SHAs.
+# Extract all *_SHA / *_VERSION names referenced by upstream-sources.nix or flake.nix.
 extract_known() {
-  grep -oE '\$\{[A-Z_][A-Z0-9_]*(_SHA|_VERSION)\}' flake.nix \
-    | tr -d '${}' | grep -v '^OLD_' | sort -u
+  grep -h -oE '[A-Z_][A-Z0-9_]*(_SHA|_VERSION)' upstream-sources.nix flake.nix \
+    | grep -v '^OLD_' | sort -u
 }
 
 VPINBALL_SRC="$(input_path vpinball)"

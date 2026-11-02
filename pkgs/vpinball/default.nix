@@ -95,8 +95,10 @@ stdenv.mkDerivation {
     # Headers expected under third-party/include/
     cp -r ${pkgs.zlibStatic}/include/. third-party/include/
     cp -r ${pkgs.liboggStatic}/include/ogg third-party/include/
-    cp ${pkgs.libopusStatic}/include/opus.h ${pkgs.libopusStatic}/include/opus_types.h third-party/include/
-    cp ${pkgs.opusfileStatic}/include/opusfile.h third-party/include/
+    # The pinned opus/opusfile installs under include/opus/; upstream
+    # flattens these into third-party/include/ (miniaudio includes <opusfile.h>)
+    cp ${pkgs.libopusStatic}/include/opus/*.h third-party/include/
+    cp ${pkgs.opusfileStatic}/include/opus/opusfile.h third-party/include/
     cp ${pkgs.libmysofaStatic}/include/mysofa.h ${pkgs.libmysofaStatic}/include/mysofa_export.h third-party/include/
     cp -r ${pkgs.libspatialaudioStatic}/include/spatialaudio third-party/include/
     mkdir -p third-party/include/openxr

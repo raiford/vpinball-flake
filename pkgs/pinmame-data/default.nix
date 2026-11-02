@@ -8,8 +8,12 @@ stdenvNoCC.mkDerivation {
 
   # Machine data fetched by upstream's external.sh, shipped next to the
   # pinmame plugin as its default data source.
-  memmaps = inputs.pinmame-memmaps;
-  gamedefs = inputs.pinmame-gamedefs;
+  srcs = [
+    (builtins.path { path = inputs.pinmame-memmaps; name = "memmaps"; })
+    (builtins.path { path = inputs.pinmame-gamedefs; name = "gamedefs"; })
+  ];
+
+  sourceRoot = ".";
 
   dontBuild = true;
 
@@ -17,9 +21,9 @@ stdenvNoCC.mkDerivation {
     runHook preInstall
 
     mkdir -p $out/memmaps $out/gamedefs
-    cp $memmaps/index.json $out/memmaps/
-    cp -r $memmaps/maps $memmaps/platforms $out/memmaps/
-    cp -r $gamedefs/catalog $gamedefs/machines $gamedefs/controllers $out/gamedefs/
+    cp memmaps/index.json $out/memmaps/
+    cp -r memmaps/maps memmaps/platforms $out/memmaps/
+    cp -r gamedefs/catalog gamedefs/machines gamedefs/controllers $out/gamedefs/
 
     runHook postInstall
   '';

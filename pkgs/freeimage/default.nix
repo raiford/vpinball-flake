@@ -27,6 +27,9 @@ stdenv.mkDerivation {
     mkdir -p $out/lib
     cp libfreeimage.{so,so.*} $out/lib
 
+    mkdir -p $out/include
+    cp ../Source/FreeImage.h $out/include/
+
     runHook postInstall
   '';
 

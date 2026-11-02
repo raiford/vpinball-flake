@@ -90,6 +90,24 @@ builtins.seq _checkLibusb (builtins.seq _checkSerialport {
 
   libzip = fetchGithub "nih-at" "libzip" vpinballConfig.LIBZIP_SHA;
 
+  openxr = fetchGithub "KhronosGroup" "OpenXR-SDK-Source" vpinballConfig.OPENXR_SHA;
+
+  zlib = fetchGithub "madler" "zlib" vpinballConfig.ZLIB_SHA;
+
+  libogg = fetchGithub "xiph" "ogg" vpinballConfig.LIBOGG_SHA;
+
+  libopus = fetchGithub "xiph" "opus" vpinballConfig.LIBOPUS_SHA;
+
+  opusfile = fetchGithub "xiph" "opusfile" vpinballConfig.OPUSFILE_SHA;
+
+  libmysofa = fetchGithub "hoene" "libmysofa" vpinballConfig.LIBMYSOFA_SHA;
+
+  libspatialaudio = fetchGithub "videolan" "libspatialaudio" vpinballConfig.LIBSPATIALAUDIO_SHA;
+
+  pinmame-memmaps = fetchGithub "tomlogic" "pinball-memory-maps" vpinballConfig.PINMAME_MEMMAPS_SHA;
+
+  pinmame-gamedefs = fetchGithub "vpinball" "pinmame-game-defs" vpinballConfig.PINMAME_GAMEDEFS_SHA;
+
   # Child dependencies declared in libdmdutil/platforms/config.sh
   libusb = fetchGithub "libusb" "libusb" libdmdutilConfig.LIBUSB_SHA;
 

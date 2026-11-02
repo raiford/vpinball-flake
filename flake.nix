@@ -65,6 +65,21 @@
           bgfx-cmake = allInputs.bgfx-cmake;
           bgfx-patch = allInputs.bgfx-patch;
         };
+        bgfx-shaderc = final.callPackage ./pkgs/bgfx-shaderc {
+          bgfx-cmake = allInputs.bgfx-cmake;
+          bgfx-patch = allInputs.bgfx-patch;
+        };
+        openxr = final.callPackage ./pkgs/openxr { inputs = allInputs; };
+        # Static, SHA-pinned copies of libs that also exist in nixpkgs.
+        # Distinct names avoid shadowing the nixpkgs versions for unrelated
+        # packages; vpinball stages them into its third-party/ tree.
+        zlibStatic = final.callPackage ./pkgs/zlib { inputs = allInputs; };
+        liboggStatic = final.callPackage ./pkgs/libogg { inputs = allInputs; };
+        libopusStatic = final.callPackage ./pkgs/libopus { inputs = allInputs; };
+        opusfileStatic = final.callPackage ./pkgs/opusfile { inputs = allInputs; };
+        libmysofaStatic = final.callPackage ./pkgs/libmysofa { inputs = allInputs; };
+        libspatialaudioStatic = final.callPackage ./pkgs/libspatialaudio { inputs = allInputs; };
+        pinmame-data = final.callPackage ./pkgs/pinmame-data { inputs = allInputs; };
         cargs = final.callPackage ./pkgs/cargs { inputs = allInputs; };
         freeimage = final.callPackage ./pkgs/freeimage { inputs = allInputs; };
         libaltsound = final.callPackage ./pkgs/libaltsound { inputs = allInputs; };
@@ -82,6 +97,10 @@
         libftdi = final.callPackage ./pkgs/libftdi { inputs = allInputs; };
         libserialport = final.callPackage ./pkgs/libserialport { inputs = allInputs; };
         hidapi = final.callPackage ./pkgs/hidapi { inputs = allInputs; };
+
+        # NOTE: opusfileStatic depends on liboggStatic/libopusStatic and
+        # libmysofaStatic on zlibStatic via the `pkgs` set, so the overlay
+        # order above does not matter (callPackage resolves lazily).
 
         # SDL has a lot of custom build options in upstream nixpkgs for audio and video stuff.
         # If necessary to force support for wayland you can add a .override to these to enable waylandSupport

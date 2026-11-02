@@ -33,7 +33,7 @@ Run the game with `result/bin/VPinballX` (or `nix run .#vpinball`).
 ## Notes
 
 - Only `x86_64-linux` is supported (matching the upstream `linux-x64` platform scripts).
-- ffmpeg comes from nixpkgs (`ffmpeg_7`) rather than an upstream-pinned source.
+- ffmpeg comes from nixpkgs (`ffmpeg`) rather than an upstream-pinned source.
 
 ## License
 

@@ -45,7 +45,7 @@ stdenv.mkDerivation {
 
     # vpinball upstream is using a SHA that is pinned around v7
     # If the vpinball updates to v8 this should be updated.
-    ffmpeg_7
+    ffmpeg
 
     # System dependencies
     sdl3

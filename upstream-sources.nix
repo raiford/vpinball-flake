@@ -16,13 +16,10 @@ let
       inherit owner repo rev;
     };
 
-  # Git fetch with submodules enabled for repos needing vendored submodules
+  # Git fetch with submodules and allRefs enabled using the flakeref URL format.
+  # This ensures Lix and Nix fetch across all branches to find non-main commits.
   fetchGitSubmodules = url: rev:
-    builtins.fetchTree {
-      type = "git";
-      inherit url rev;
-      submodules = true;
-    };
+    builtins.fetchTree "git+${url}?submodules=1&allRefs=1&rev=${rev}";
 
   # Parse a shell config file into an attribute set of KEY=VALUE strings.
   # Only matches variable assignments of the form *_SHA=... and *_VERSION=...
@@ -70,9 +67,9 @@ builtins.seq _checkLibusb (builtins.seq _checkSerialport {
   # Direct dependencies declared in vpinball/platforms/config.sh
   sdl3 = fetchGithub "libsdl-org" "SDL" vpinballConfig.SDL_SHA;
 
-  sdl3-image = fetchGitSubmodules "https://github.com/libsdl-org/SDL_image.git" vpinballConfig.SDL_IMAGE_SHA;
+  sdl3-image = fetchGitSubmodules "https://github.com/libsdl-org/SDL_image" vpinballConfig.SDL_IMAGE_SHA;
 
-  sdl3-ttf = fetchGitSubmodules "https://github.com/libsdl-org/SDL_ttf.git" vpinballConfig.SDL_TTF_SHA;
+  sdl3-ttf = fetchGitSubmodules "https://github.com/libsdl-org/SDL_ttf" vpinballConfig.SDL_TTF_SHA;
 
   freeimage = fetchGithub "toxieainc" "freeimage" vpinballConfig.FREEIMAGE_SHA;
 

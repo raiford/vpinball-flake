@@ -22,6 +22,7 @@ stdenv.mkDerivation {
     # Custom dependencies
     freeimage
     bgfx
+    bgfx-shaderc
     pinmame
     libdmdutil
     libwinevbs
@@ -32,6 +33,14 @@ stdenv.mkDerivation {
     libzip
     hidapi
     libvni
+    openxr
+    zlibStatic
+    liboggStatic
+    libopusStatic
+    opusfileStatic
+    libmysofaStatic
+    libspatialaudioStatic
+    pinmame-data
 
     # vpinball upstream is using a SHA that is pinned around v7
     # If the vpinball updates to v8 this should be updated.
@@ -58,6 +67,48 @@ stdenv.mkDerivation {
   ];
 
   hardeningDisable = [ "format" ];
+
+  # Upstream's platforms/linux-x64/external.sh normally downloads and builds
+  # these into the third-party/ staging tree. In Nix each is a separate
+  # derivation; stage them into the (writable) workspace to mirror that layout.
+  # Note: $PWD, not $src — the store path is read-only.
+  preConfigure = ''
+    runHook prePreConfigure
+
+    # shaderc host tool (compiles the embedded BGFX shaders at build time)
+    mkdir -p third-party/tools/linux-x64
+    cp ${pkgs.bgfx-shaderc}/bin/shaderc third-party/tools/linux-x64/
+
+    # Static libs linked by name from third-party/build-libs/linux-x64
+    mkdir -p third-party/build-libs/linux-x64
+    cp ${pkgs.zlibStatic}/lib/libz.a third-party/build-libs/linux-x64/
+    cp ${pkgs.liboggStatic}/lib/libogg.a third-party/build-libs/linux-x64/
+    cp ${pkgs.libopusStatic}/lib/libopus.a third-party/build-libs/linux-x64/
+    cp ${pkgs.opusfileStatic}/lib/libopusfile.a third-party/build-libs/linux-x64/
+    cp ${pkgs.libmysofaStatic}/lib/libmysofa.a third-party/build-libs/linux-x64/
+    cp ${pkgs.libspatialaudioStatic}/lib/libspatialaudio.a third-party/build-libs/linux-x64/
+
+    # OpenXR runtime loader (linked from third-party/runtime-libs/linux-x64)
+    mkdir -p third-party/runtime-libs/linux-x64
+    cp -a ${pkgs.openxr}/lib/libopenxr_loader.so* third-party/runtime-libs/linux-x64/
+
+    # Headers expected under third-party/include/
+    cp -r ${pkgs.zlibStatic}/include/. third-party/include/
+    cp -r ${pkgs.liboggStatic}/include/ogg third-party/include/
+    cp ${pkgs.libopusStatic}/include/opus.h ${pkgs.libopusStatic}/include/opus_types.h third-party/include/
+    cp ${pkgs.opusfileStatic}/include/opusfile.h third-party/include/
+    cp ${pkgs.libmysofaStatic}/include/mysofa.h ${pkgs.libmysofaStatic}/include/mysofa_export.h third-party/include/
+    cp -r ${pkgs.libspatialaudioStatic}/include/spatialaudio third-party/include/
+    mkdir -p third-party/include/openxr
+    cp ${pkgs.openxr}/include/openxr/*.h third-party/include/openxr/
+
+    # PinMAME machine data, shipped with the pinmame plugin as default data
+    mkdir -p third-party/memmaps third-party/gamedefs
+    cp -r ${pkgs.pinmame-data}/memmaps/. third-party/memmaps/
+    cp -r ${pkgs.pinmame-data}/gamedefs/. third-party/gamedefs/
+
+    runHook postPreConfigure
+  '';
 
   cmakeFlags = [
     "-DPLATFORM=linux"

@@ -184,4 +184,4 @@ Every package receives `inputs = allInputs;` (where `allInputs = inputs // upstr
 | **`sdl3`** | `libsdl-org/SDL` | Pinned explicitly with `-DSDL_X11=ON -DSDL_WAYLAND=ON` to ensure loud build failures rather than silent missing-driver runtime bugs. |
 | **`sdl3-image`** | `libsdl-org/SDL_image` | Git fetch with recursive submodules (`allRefs=1`). `-DSDLIMAGE_VENDORED=ON`. |
 | **`sdl3-ttf`** | `libsdl-org/SDL_ttf` | Git fetch with recursive submodules (`allRefs=1`). `-DSDLTTF_VENDORED=ON`. |
-| **`ffmpeg`** | Upstream pins SHA | Handled via nixpkgs `ffmpeg_7` rather than compiling from source, matching ABI. |
+| **`ffmpeg`** | Upstream pins SHA | Handled via nixpkgs `ffmpeg` rather than compiling from source, matching ABI. |

@@ -4,13 +4,13 @@ A Nix flake that builds [Visual Pinball](https://github.com/vpinball/vpinball) (
 
 ## What it builds
 
-| Package | Description |
-| --- | --- |
-| `vpinball` (default) | VPinballX engine, Release build |
-| `vpinball-debug` | VPinballX engine, Debug build (all custom deps rebuilt as Debug) |
-| `vpinfe` | [VPinFE](https://github.com/superhac/vpinfe) front-end (Python/pywebview) |
-| `vpxtool` | [vpxtool](https://github.com/francisdb/vpxtool) — CLI for manipulating `.vpx` tables (Rust) |
-| `vpx-editor` | [vpx-editor](https://github.com/jsm174/vpx-editor) — Electron-based table editor |
+| Package              | Description                                                                                 |
+| -------------------- | ------------------------------------------------------------------------------------------- |
+| `vpinball` (default) | VPinballX engine, Release build                                                             |
+| `vpinball-debug`     | VPinballX engine, Debug build (all custom deps rebuilt as Debug)                            |
+| `vpinfe`             | [VPinFE](https://github.com/superhac/vpinfe) front-end (Python/pywebview)                   |
+| `vpxtool`            | [vpxtool](https://github.com/francisdb/vpxtool) — CLI for manipulating `.vpx` tables (Rust) |
+| `vpx-editor`         | [vpx-editor](https://github.com/jsm174/vpx-editor) — Electron-based table editor            |
 
 ## How it works
 

@@ -4,16 +4,25 @@
 #   2. libdmdutil/platforms/config.sh
 #   3. libdof/platforms/config.sh
 #   4. libzedmd/platforms/config.sh
-# and fetches the corresponding sources via builtins.fetchGit.
+# and fetches sources via builtins.fetchTree.
 
 { vpinball, bgfx-cmake }:
 let
-  # Helper to fetch git repositories with allRefs = true so any arbitrary
-  # commit SHA can be fetched even if it is not on refs/heads/master.
-  fetchGitAll = args:
-    builtins.fetchGit ({
-      allRefs = true;
-    } // args);
+  # Use builtins.fetchTree with GitHub archive API for GitHub repos.
+  # This avoids git protocol branch limitations (e.g. commits not on refs/heads/master).
+  fetchGithub = owner: repo: rev:
+    builtins.fetchTree {
+      type = "github";
+      inherit owner repo rev;
+    };
+
+  # Git fetch with submodules enabled for repos needing vendored submodules
+  fetchGitSubmodules = url: rev:
+    builtins.fetchTree {
+      type = "git";
+      inherit url rev;
+      submodules = true;
+    };
 
   # Parse a shell config file into an attribute set of KEY=VALUE strings.
   # Only matches variable assignments of the form *_SHA=... and *_VERSION=...
@@ -36,23 +45,14 @@ let
   vpinballConfig = parseConfig "${vpinball}/platforms/config.sh";
 
   # 2. Fetch and parse direct dependency configs
-  libdmdutilSrc = fetchGitAll {
-    url = "https://github.com/vpinball/libdmdutil.git";
-    rev = vpinballConfig.LIBDMDUTIL_SHA;
-  };
+  libdmdutilSrc = fetchGithub "vpinball" "libdmdutil" vpinballConfig.LIBDMDUTIL_SHA;
   libdmdutilConfig = parseConfig "${libdmdutilSrc}/platforms/config.sh";
 
-  libdofSrc = fetchGitAll {
-    url = "https://github.com/jsm174/libdof.git";
-    rev = vpinballConfig.LIBDOF_SHA;
-  };
+  libdofSrc = fetchGithub "jsm174" "libdof" vpinballConfig.LIBDOF_SHA;
   libdofConfig = parseConfig "${libdofSrc}/platforms/config.sh";
 
   # 3. Fetch and parse transitive dependency configs
-  libzedmdSrc = fetchGitAll {
-    url = "https://github.com/PPUC/libzedmd.git";
-    rev = libdmdutilConfig.LIBZEDMD_SHA;
-  };
+  libzedmdSrc = fetchGithub "PPUC" "libzedmd" libdmdutilConfig.LIBZEDMD_SHA;
   libzedmdConfig = parseConfig "${libzedmdSrc}/platforms/config.sh";
 
   # SHA mismatch consistency checks
@@ -68,114 +68,55 @@ let
 in
 builtins.seq _checkLibusb (builtins.seq _checkSerialport {
   # Direct dependencies declared in vpinball/platforms/config.sh
-  sdl3 = fetchGitAll {
-    url = "https://github.com/libsdl-org/SDL.git";
-    rev = vpinballConfig.SDL_SHA;
-  };
+  sdl3 = fetchGithub "libsdl-org" "SDL" vpinballConfig.SDL_SHA;
 
-  sdl3-image = fetchGitAll {
-    url = "https://github.com/libsdl-org/SDL_image.git";
-    rev = vpinballConfig.SDL_IMAGE_SHA;
-    submodules = true;
-  };
+  sdl3-image = fetchGitSubmodules "https://github.com/libsdl-org/SDL_image.git" vpinballConfig.SDL_IMAGE_SHA;
 
-  sdl3-ttf = fetchGitAll {
-    url = "https://github.com/libsdl-org/SDL_ttf.git";
-    rev = vpinballConfig.SDL_TTF_SHA;
-    submodules = true;
-  };
+  sdl3-ttf = fetchGitSubmodules "https://github.com/libsdl-org/SDL_ttf.git" vpinballConfig.SDL_TTF_SHA;
 
-  freeimage = fetchGitAll {
-    url = "https://github.com/toxieainc/freeimage.git";
-    rev = vpinballConfig.FREEIMAGE_SHA;
-  };
+  freeimage = fetchGithub "toxieainc" "freeimage" vpinballConfig.FREEIMAGE_SHA;
 
-  libaltsound = fetchGitAll {
-    url = "https://github.com/vpinball/libaltsound.git";
-    rev = vpinballConfig.LIBALTSOUND_SHA;
-  };
+  libaltsound = fetchGithub "vpinball" "libaltsound" vpinballConfig.LIBALTSOUND_SHA;
 
-  bgfx-patch = fetchGitAll {
-    url = "https://github.com/vbousquet/bgfx.git";
-    rev = vpinballConfig.BGFX_PATCH_SHA;
-  };
+  bgfx-patch = fetchGithub "vbousquet" "bgfx" vpinballConfig.BGFX_PATCH_SHA;
 
   inherit bgfx-cmake;
   bgfxCmakeVersion = vpinballConfig.BGFX_CMAKE_VERSION;
 
-  pinmame = fetchGitAll {
-    url = "https://github.com/vbousquet/pinmame.git";
-    rev = vpinballConfig.PINMAME_SHA;
-  };
+  pinmame = fetchGithub "vbousquet" "pinmame" vpinballConfig.PINMAME_SHA;
 
   libdmdutil = libdmdutilSrc;
 
-  libwinevbs = fetchGitAll {
-    url = "https://github.com/vpinball/libwinevbs.git";
-    rev = vpinballConfig.LIBWINEVBS_SHA;
-  };
+  libwinevbs = fetchGithub "vpinball" "libwinevbs" vpinballConfig.LIBWINEVBS_SHA;
 
   libdof = libdofSrc;
 
-  libzip = fetchGitAll {
-    url = "https://github.com/nih-at/libzip.git";
-    rev = vpinballConfig.LIBZIP_SHA;
-  };
+  libzip = fetchGithub "nih-at" "libzip" vpinballConfig.LIBZIP_SHA;
 
   # Child dependencies declared in libdmdutil/platforms/config.sh
-  libusb = fetchGitAll {
-    url = "https://github.com/libusb/libusb.git";
-    rev = libdmdutilConfig.LIBUSB_SHA;
-  };
+  libusb = fetchGithub "libusb" "libusb" libdmdutilConfig.LIBUSB_SHA;
 
   libzedmd = libzedmdSrc;
 
-  libserum = fetchGitAll {
-    url = "https://github.com/PPUC/libserum.git";
-    rev = libdmdutilConfig.LIBSERUM_SHA;
-  };
+  libserum = fetchGithub "PPUC" "libserum" libdmdutilConfig.LIBSERUM_SHA;
 
-  libpupdmd = fetchGitAll {
-    url = "https://github.com/PPUC/libpupdmd.git";
-    rev = libdmdutilConfig.LIBPUPDMD_SHA;
-  };
+  libpupdmd = fetchGithub "PPUC" "libpupdmd" libdmdutilConfig.LIBPUPDMD_SHA;
 
-  libvni = fetchGitAll {
-    url = "https://github.com/PPUC/libvni.git";
-    rev = libdmdutilConfig.LIBVNI_SHA;
-  };
+  libvni = fetchGithub "PPUC" "libvni" libdmdutilConfig.LIBVNI_SHA;
 
   # Child dependencies declared in libdof/platforms/config.sh
-  libserialport = fetchGitAll {
-    url = "https://github.com/sigrokproject/libserialport.git";
-    rev = libdofConfig.LIBSERIALPORT_SHA;
-  };
+  libserialport = fetchGithub "sigrokproject" "libserialport" libdofConfig.LIBSERIALPORT_SHA;
 
-  hidapi = fetchGitAll {
-    url = "https://github.com/libusb/hidapi.git";
-    rev = libdofConfig.HIDAPI_SHA;
-  };
+  hidapi = fetchGithub "libusb" "hidapi" libdofConfig.HIDAPI_SHA;
 
-  libftdi = fetchGitAll {
-    url = "https://github.com/jsm174/libftdi.git";
-    rev = libdofConfig.LIBFTDI_SHA;
-  };
+  libftdi = fetchGithub "jsm174" "libftdi" libdofConfig.LIBFTDI_SHA;
 
   # Child dependencies declared in libzedmd/platforms/config.sh
-  cargs = fetchGitAll {
-    url = "https://github.com/likle/cargs.git";
-    rev = libzedmdConfig.CARGS_SHA;
-  };
+  cargs = fetchGithub "likle" "cargs" libzedmdConfig.CARGS_SHA;
 
-  libframeutil = fetchGitAll {
-    url = "https://github.com/ppuc/libframeutil.git";
-    rev = libzedmdConfig.LIBFRAMEUTIL_SHA;
-  };
+  libframeutil = fetchGithub "ppuc" "libframeutil" libzedmdConfig.LIBFRAMEUTIL_SHA;
 
-  sockpp = fetchGitAll {
-    url = "https://github.com/fpagliughi/sockpp.git";
-    rev = libzedmdConfig.SOCKPP_SHA;
-  };
+  sockpp = fetchGithub "fpagliughi" "sockpp" libzedmdConfig.SOCKPP_SHA;
 
   # Note: FFMPEG_SHA is declared upstream in vpinball/platforms/config.sh
   # but provided by nixpkgs ffmpeg_7 rather than fetched as a source.

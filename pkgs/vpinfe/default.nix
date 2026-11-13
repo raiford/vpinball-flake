@@ -8,6 +8,14 @@ let
   # Release tag pinned by scripts/update_vpinfe (e.g. "v2.6.6" -> "2.6.6");
   # falls back to the short commit hash when the input is not tag-pinned.
   ver = lib.removePrefix "v" (inputs.vpinfeRelease or inputs.vpinfe.shortRev);
+
+  # Plain nixpkgs WITHOUT the vpinball overlay, so chromium/sdl3/ffmpeg
+  # hashes match cache.nixos.org and don't rebuild from source.
+  # TODO: Longer-term, consider renaming the overlay's shadowed packages (sdl3 → sdl3Pinned, etc.) like the *Static ones, so no other package in that nixpkgs instance can silently pick up the custom builds.
+  plainPkgs = import inputs.nixpkgs {
+    system = pkgs.stdenv.hostPlatform.system;
+    config.allowUnfree = true;
+  };
 in
 pythonPackages.buildPythonPackage {
   pname = "vpinfe";
@@ -36,7 +44,7 @@ pythonPackages.buildPythonPackage {
   #   binutils provides that `ld`; the wrapper adds the lib dirs to
   #   LD_LIBRARY_PATH so the store paths are found.
   buildInputs = with pkgs; [
-    chromium
+    plainPkgs.chromium
     libX11
     libXrandr
     binutils

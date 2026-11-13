@@ -16,7 +16,9 @@ stdenv.mkDerivation {
   ];
 
   buildInputs = with vpinPkgs; [
-    libusb
+    # libftdi builds inside libdof's upstream tree, so it follows libdof's
+    # libusb pin.
+    libusbDof
   ];
 
   preConfigure = ''
@@ -27,8 +29,8 @@ stdenv.mkDerivation {
     "-DFTDI_EEPROM=OFF"
     "-DEXAMPLES=OFF"
     "-DSTATICLIBS=OFF"
-    "-DLIBUSB_INCLUDE_DIR=${vpinPkgs.libusb}/include/libusb-1.0"
-    "-DLIBUSB_LIBRARIES=${vpinPkgs.libusb}/lib/libusb-1.0.so"
+    "-DLIBUSB_INCLUDE_DIR=${vpinPkgs.libusbDof}/include/libusb-1.0"
+    "-DLIBUSB_LIBRARIES=${vpinPkgs.libusbDof}/lib/libusb-1.0.so"
     "-DCMAKE_BUILD_TYPE=Release"
     "-DCMAKE_BUILD_TYPE=${buildType}"
   ];

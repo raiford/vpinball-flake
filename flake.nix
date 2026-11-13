@@ -129,9 +129,19 @@
             pinmame = callPackage ./pkgs/pinmame { inputs = allInputs; inherit buildType; };
             sockpp = callPackage ./pkgs/sockpp { inputs = allInputs; inherit buildType; };
             libusb = callPackage ./pkgs/libusb { inputs = allInputs; };
+            # Second libusb instance for libdof/libftdi when their upstream
+            # pin diverges from libdmdutil's (identical store path when not).
+            libusbDof = callPackage ./pkgs/libusb {
+              inputs = allInputs // { libusb = allInputs.libusbDof; };
+            };
             libvni = callPackage ./pkgs/libvni { inputs = allInputs; inherit buildType; };
             libftdi = callPackage ./pkgs/libftdi { inputs = allInputs; inherit buildType; };
             libserialport = callPackage ./pkgs/libserialport { inputs = allInputs; };
+            # Second libserialport instance for libdof when its upstream pin
+            # diverges from libzedmd's (identical store path when not).
+            libserialportDof = callPackage ./pkgs/libserialport {
+              inputs = allInputs // { libserialport = allInputs.libserialportDof; };
+            };
             hidapi = callPackage ./pkgs/hidapi { inputs = allInputs; inherit buildType; };
 
             # SDL has a lot of custom build options in upstream nixpkgs for audio and video stuff.

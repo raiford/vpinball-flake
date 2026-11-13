@@ -52,18 +52,35 @@ let
   libzedmdSrc = fetchGithub "PPUC" "libzedmd" libdmdutilConfig.LIBZEDMD_SHA;
   libzedmdConfig = parseConfig "${libzedmdSrc}/platforms/config.sh";
 
-  # SHA mismatch consistency checks
-  _checkLibusb =
+  # libusb and libserialport are each pinned independently by two upstream
+  # projects. When the pins diverge, fetch a separate instance per consumer
+  # so every package gets the exact revision its own config.sh declares —
+  # mirroring upstream, where each project builds and stages its own copy
+  # into its third-party/ tree. When the pins agree, both attributes are
+  # the same store path and no extra build results.
+  #
+  #   libusb:        libdmdutil (its own pin) vs libdof (its own pin, also
+  #                  used by libftdi, which builds inside libdof's tree)
+  #   libserialport: libzedmd (its own pin; libdmdutil stages this copy)
+  #                  vs libdof (its own pin)
+  libusbDmdutil = fetchGithub "libusb" "libusb" libdmdutilConfig.LIBUSB_SHA;
+  libusbDof = fetchGithub "libusb" "libusb" libdofConfig.LIBUSB_SHA;
+
+  libserialportZedmd = fetchGithub "sigrokproject" "libserialport" libzedmdConfig.LIBSERIALPORT_SHA;
+  libserialportDof = fetchGithub "sigrokproject" "libserialport" libdofConfig.LIBSERIALPORT_SHA;
+
+  # Informational only: note when shared deps resolve to separate instances.
+  _noteLibusb =
     if libdmdutilConfig.LIBUSB_SHA != libdofConfig.LIBUSB_SHA then
-      builtins.trace "warning: libusb SHA mismatch between libdmdutil (${libdmdutilConfig.LIBUSB_SHA}) and libdof (${libdofConfig.LIBUSB_SHA}), using libdmdutil" null
+      builtins.trace "note: libusb SHA differs between libdmdutil (${libdmdutilConfig.LIBUSB_SHA}) and libdof (${libdofConfig.LIBUSB_SHA}); building separate instances (libusb / libusbDof)" null
     else null;
 
-  _checkSerialport =
-    if libdofConfig.LIBSERIALPORT_SHA != libzedmdConfig.LIBSERIALPORT_SHA then
-      throw "libserialport SHA mismatch between libdof (${libdofConfig.LIBSERIALPORT_SHA}) and libzedmd (${libzedmdConfig.LIBSERIALPORT_SHA})"
+  _noteSerialport =
+    if libzedmdConfig.LIBSERIALPORT_SHA != libdofConfig.LIBSERIALPORT_SHA then
+      builtins.trace "note: libserialport SHA differs between libzedmd (${libzedmdConfig.LIBSERIALPORT_SHA}) and libdof (${libdofConfig.LIBSERIALPORT_SHA}); building separate instances (libserialport / libserialportDof)" null
     else null;
 in
-builtins.seq _checkLibusb (builtins.seq _checkSerialport {
+builtins.seq _noteLibusb (builtins.seq _noteSerialport {
   # Direct dependencies declared in vpinball/platforms/config.sh
   sdl3 = fetchGithub "libsdl-org" "SDL" vpinballConfig.SDL_SHA;
 
@@ -109,7 +126,10 @@ builtins.seq _checkLibusb (builtins.seq _checkSerialport {
   pinmame-gamedefs = fetchGithub "vpinball" "pinmame-game-defs" vpinballConfig.PINMAME_GAMEDEFS_SHA;
 
   # Child dependencies declared in libdmdutil/platforms/config.sh
-  libusb = fetchGithub "libusb" "libusb" libdmdutilConfig.LIBUSB_SHA;
+  # libusb: canonical instance follows libdmdutil's pin; libdof and libftdi
+  # use libusbDof (same store path when the pins agree).
+  libusb = libusbDmdutil;
+  libusbDof = libusbDof;
 
   libzedmd = libzedmdSrc;
 
@@ -120,7 +140,11 @@ builtins.seq _checkLibusb (builtins.seq _checkSerialport {
   libvni = fetchGithub "PPUC" "libvni" libdmdutilConfig.LIBVNI_SHA;
 
   # Child dependencies declared in libdof/platforms/config.sh
-  libserialport = fetchGithub "sigrokproject" "libserialport" libdofConfig.LIBSERIALPORT_SHA;
+  # libserialport: canonical instance follows libzedmd's pin (libdmdutil
+  # stages this copy from libzedmd's build); libdof uses libserialportDof
+  # (same store path when the pins agree).
+  libserialport = libserialportZedmd;
+  libserialportDof = libserialportDof;
 
   hidapi = fetchGithub "libusb" "hidapi" libdofConfig.HIDAPI_SHA;
 

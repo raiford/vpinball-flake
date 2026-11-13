@@ -20,9 +20,12 @@ stdenv.mkDerivation {
   ])
   ++ (with vpinPkgs; [
     hidapi
-    libserialport
+    # libdof builds its own libserialport/libusb from its own config.sh
+    # pins; the *Dof instances match them (and collapse to the canonical
+    # instances when the upstream pins agree).
+    libserialportDof
     libftdi
-    libusb
+    libusbDof
   ]);
 
   cmakeFlags = [

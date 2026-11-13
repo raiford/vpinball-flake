@@ -15,11 +15,11 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1793540411,
-        "narHash": "sha256-fiPJ88izTVucjeo2EQ3jk4aWmLg03I1D4vxnX2QjEgE=",
+        "lastModified": 1794386569,
+        "narHash": "sha256-x9sADJvoVG0L6RejZB+/BB4YiGZFBZrfTlhF4uBq1tQ=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "0bb2eedc20e4739f29e8045034f2828ad7054f8f",
+        "rev": "d4f25a3e562008648d45bcf2d70bcc7422cad84e",
         "type": "github"
       },
       "original": {
@@ -42,11 +42,11 @@
     "vpinball": {
       "flake": false,
       "locked": {
-        "lastModified": 1793586619,
-        "narHash": "sha256-sXBytL0xglFZMUiHU5qz7HVmlHAqPg8aPwWxCkGLx38=",
+        "lastModified": 1794525852,
+        "narHash": "sha256-kLRU879Yt+ucRpC2iRbydGBMxIzjK6fkEx3vqDGQ/TY=",
         "owner": "vpinball",
         "repo": "vpinball",
-        "rev": "f4a28d2d035d3f37b835315ee08a22e63e832f06",
+        "rev": "fb51459f034d8aeadf7578e574342b1a4b412e63",
         "type": "github"
       },
       "original": {

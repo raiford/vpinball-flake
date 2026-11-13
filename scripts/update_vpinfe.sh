@@ -72,8 +72,6 @@ awk -v tag="$TAG" '
 mv "$tmp" flake.nix
 echo "flake.nix: vpinfe ref -> ${TAG}"
 
-git diff --no-color flake.nix || true
-
 nix flake update vpinfe
 
 echo "✅ vpinfe pinned to ${TAG}"

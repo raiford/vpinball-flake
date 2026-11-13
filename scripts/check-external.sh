@@ -4,10 +4,10 @@
 #
 # Strategy: for each *_SHA / *_VERSION variable that vpinball's
 # linux-x64/external.sh actually references (and the equivalent for the
-# transitive libdmdutil/libdof/libzedmd configs), make sure flake.nix's
-# update hooks also reference it. Any var that isn't referenced is a
-# potential new upstream dependency that hasn't been wired into the
-# flake yet.
+# transitive libdmdutil/libdof/libzedmd configs), make sure
+# upstream-sources.nix (the pure Nix SHA parser) also references it.
+# Any var that isn't referenced is a potential new upstream dependency
+# that hasn't been wired into the flake yet.
 #
 # Platform is hard-coded to linux-x64 because that's the only system
 # this flake supports. Vars declared in config.sh but unused on linux-x64
@@ -64,6 +64,18 @@ extract_known() {
     | grep -v '^OLD_' | sort -u
 }
 
+# All *_SHA/*_VERSION vars referenced by any linux-* external.sh under a
+# source tree. vpinball uses platforms/linux-<arch>/external.sh; the
+# PPUC/libdof family uses platforms/linux/<arch>/external.sh. Used only
+# for the informational "not used by any linux build" note.
+linux_refs() {
+  local src="$1" f
+  for f in "$src"/platforms/linux-*/external.sh "$src"/platforms/linux/*/external.sh; do
+    [[ -f "$f" ]] || continue
+    extract_refs "$f"
+  done | sort -u
+}
+
 VPINBALL_SRC="$(input_path vpinball)"
 LIBDMDUTIL_SRC="$(input_path libdmdutil)"
 LIBDOF_SRC="$(input_path libdof)"
@@ -90,17 +102,25 @@ known="$tmpdir/known"
 
 extract_known > "$known"
 
-# Vars declared upstream but not referenced by flake.nix update hooks.
+# Vars declared upstream but not referenced by upstream-sources.nix.
 missing="$(comm -23 "$declared" "$known")"
 
-# Vars referenced by flake.nix but no longer declared upstream.
-# Informational only — not an error; could be a rename or a dep that
-# vpinball actually still needs but moved to a different file.
+# Vars referenced by upstream-sources.nix/flake.nix but not used by the
+# linux-x64 build this flake targets. Informational only — not an
+# error; the flake may fetch them for other platforms or for data.
+# Vars not referenced by any linux-* build are called out explicitly.
 stale="$(comm -13 "$declared" "$known")"
+all_linux_refs="$tmpdir/all_linux_refs"
+{
+  linux_refs "$VPINBALL_SRC"
+  linux_refs "$LIBDMDUTIL_SRC"
+  linux_refs "$LIBDOF_SRC"
+  linux_refs "$LIBZEDMD_SRC"
+} | sort -u > "$all_linux_refs"
 
 echo "=== check-external.sh ==="
 echo "upstream declares $(wc -l <"$declared") SHA/VERSION vars"
-echo "flake.nix handles $(wc -l <"$known") SHA/VERSION vars"
+echo "upstream-sources.nix handles $(wc -l <"$known") SHA/VERSION vars"
 echo
 
 if [[ -n "$missing" ]]; then
@@ -108,16 +128,25 @@ if [[ -n "$missing" ]]; then
   echo "$missing" | sed 's/^/  - /' >&2
   echo >&2
   echo "Each missing var likely corresponds to a new dependency that" >&2
-  echo "vpinball has added upstream. Add a matching flake input in" >&2
-  echo "flake.nix and a corresponding nix flake update ... line in the" >&2
-  echo "updateDirectInputs or updateChildInputs shellHook." >&2
+  echo "vpinball has added upstream. To wire it in:" >&2
+  echo "  1. Add a fetch line in upstream-sources.nix (fetchGithub or" >&2
+  echo "     fetchGitSubmodules, keyed off the config var)." >&2
+  echo "  2. Create pkgs/<name>/default.nix with a derivation for it." >&2
+  echo "  3. Wire it into the vpinPkgs scope in flake.nix, and into" >&2
+  echo "     pkgs/vpinball/default.nix buildInputs if vpinball links it." >&2
   exit 1
 fi
 
 if [[ -n "$stale" ]]; then
-  echo "note: flake.nix references vars not currently declared upstream:"
-  echo "$stale" | sed 's/^/  - /'
-  echo "(not an error — could be a rename or transitive config file move)"
+  echo "note: upstream-sources.nix references vars not used by the linux-x64 build:"
+  while IFS= read -r v; do
+    if ! grep -qx "$v" "$all_linux_refs"; then
+      echo "  - $v (not used by any linux-* build)"
+    else
+      echo "  - $v"
+    fi
+  done <<< "$stale"
+  echo "(informational only — may be fetched for other platforms or for data)"
 fi
 
 echo "OK: no drift detected."

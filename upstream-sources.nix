@@ -105,7 +105,9 @@ builtins.seq _noteLibusb (builtins.seq _noteSerialport {
 
   libdof = libdofSrc;
 
-  libzip = fetchGithub "nih-at" "libzip" vpinballConfig.LIBZIP_SHA;
+  # Note: upstream used to pin libzip via a LIBZIP SHA variable in
+  # config.sh; the linux builds no longer fetch it, and the vpinball
+  # derivation uses nixpkgs' libzip instead.
 
   openxr = fetchGithub "KhronosGroup" "OpenXR-SDK-Source" vpinballConfig.OPENXR_SHA;
 

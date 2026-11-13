@@ -2,9 +2,10 @@
 # check-external.sh — detect drift between vpinball's upstream build
 # scripts and the inputs wired into this flake.
 #
-# Strategy: for each *_SHA / *_VERSION variable that vpinball's
-# linux-x64/external.sh actually references (and the equivalent for the
-# transitive libdmdutil/libdof/libzedmd configs), make sure
+# Strategy: for each *_SHA / *_VERSION variable that a linux-x64
+# external.sh actually references, across every repo in the dependency
+# tree that ships a platforms/config.sh (vpinball, libdmdutil, libdof,
+# libzedmd, libserum, libvni, libpupdmd), make sure
 # upstream-sources.nix (the pure Nix SHA parser) also references it.
 # Any var that isn't referenced is a potential new upstream dependency
 # that hasn't been wired into the flake yet.
@@ -35,7 +36,7 @@ input_path() {
 extract_vars() {
   local file="$1"
   [[ -f "$file" ]] || { echo "warn: missing $file" >&2; return 0; }
-  grep -oE '^[[:space:]]*[A-Z_][A-Z0-9_]*(_SHA|_VERSION)=' "$file" \
+  { grep -oE '^[[:space:]]*[A-Z_][A-Z0-9_]*(_SHA|_VERSION)=' "$file" || true; } \
     | tr -d ' \t' | sed 's/=$//' | sort -u
 }
 
@@ -46,16 +47,18 @@ extract_vars() {
 extract_refs() {
   local file="$1"
   [[ -f "$file" ]] || return 0
-  grep -oE '\$\{?[A-Z_][A-Z0-9_]*(_SHA|_VERSION)\}?' "$file" \
+  { grep -oE '\$\{?[A-Z_][A-Z0-9_]*(_SHA|_VERSION)\}?' "$file" || true; } \
     | tr -d '${}' | sort -u
 }
 
 # Intersection of "vars declared in config.sh" and "vars referenced by
-# this platform's external.sh". The result is the set the platform
-# actually cares about.
+# this platform's external.sh" file(s). The result is the set the
+# platform actually cares about. Some builds (libserum) pull shared
+# fetch logic from external-common.sh, so extra files can be passed.
 used_vars() {
-  local config="$1" ext="$2"
-  comm -12 <(extract_vars "$config") <(extract_refs "$ext")
+  local config="$1"; shift
+  comm -12 <(extract_vars "$config") \
+           <(for f in "$@"; do extract_refs "$f"; done | sort -u)
 }
 
 # Extract all *_SHA / *_VERSION names referenced by upstream-sources.nix or flake.nix.
@@ -70,7 +73,9 @@ extract_known() {
 # for the informational "not used by any linux build" note.
 linux_refs() {
   local src="$1" f
-  for f in "$src"/platforms/linux-*/external.sh "$src"/platforms/linux/*/external.sh; do
+  for f in "$src"/platforms/linux-*/external.sh \
+           "$src"/platforms/linux/*/external.sh \
+           "$src"/platforms/external-common.sh; do
     [[ -f "$f" ]] || continue
     extract_refs "$f"
   done | sort -u
@@ -80,6 +85,9 @@ VPINBALL_SRC="$(input_path vpinball)"
 LIBDMDUTIL_SRC="$(input_path libdmdutil)"
 LIBDOF_SRC="$(input_path libdof)"
 LIBZEDMD_SRC="$(input_path libzedmd)"
+LIBSERUM_SRC="$(input_path libserum)"
+LIBVNI_SRC="$(input_path libvni)"
+LIBPUPDMD_SRC="$(input_path libpupdmd)"
 
 tmpdir="$(mktemp -d)"
 trap 'rm -rf "$tmpdir"' EXIT
@@ -98,6 +106,19 @@ known="$tmpdir/known"
             "$LIBDOF_SRC/platforms/linux/x64/external.sh"
   used_vars "$LIBZEDMD_SRC/platforms/config.sh" \
             "$LIBZEDMD_SRC/platforms/linux/x64/external.sh"
+  # Leaf DMD libs pin their own (header-only) libframeutil copy.
+  # libserum's linux build pulls it in via external-common.sh.
+  used_vars "$LIBSERUM_SRC/platforms/config.sh" \
+            "$LIBSERUM_SRC/platforms/linux/x64/external.sh" \
+            "$LIBSERUM_SRC/platforms/external-common.sh"
+  used_vars "$LIBVNI_SRC/platforms/config.sh" \
+            "$LIBVNI_SRC/platforms/linux/x64/external.sh"
+  # The pinned libpupdmd revision has no config.sh yet; newer upstream
+  # revisions do. Audit it when present so a future pin bump is covered.
+  if [[ -f "$LIBPUPDMD_SRC/platforms/config.sh" ]]; then
+    used_vars "$LIBPUPDMD_SRC/platforms/config.sh" \
+              "$LIBPUPDMD_SRC/platforms/linux/x64/external.sh"
+  fi
 } | sort -u > "$declared"
 
 extract_known > "$known"
@@ -116,6 +137,9 @@ all_linux_refs="$tmpdir/all_linux_refs"
   linux_refs "$LIBDMDUTIL_SRC"
   linux_refs "$LIBDOF_SRC"
   linux_refs "$LIBZEDMD_SRC"
+  linux_refs "$LIBSERUM_SRC"
+  linux_refs "$LIBVNI_SRC"
+  linux_refs "$LIBPUPDMD_SRC"
 } | sort -u > "$all_linux_refs"
 
 echo "=== check-external.sh ==="

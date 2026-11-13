@@ -3,7 +3,7 @@ default:
 
 update:
   just update-vpinfe
-  nix flake update vpinball
+  nix flake update
 
 update-vpinfe:
   ./scripts/update_vpinfe.sh

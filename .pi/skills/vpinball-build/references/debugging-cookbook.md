@@ -43,21 +43,24 @@ Upstream updated `platforms/config.sh` and added new external dependencies (or n
 
 ---
 
-### 1.2 Transitive SHA Mismatch (`_checkSerialport` / `_checkLibusb`)
+### 1.2 Divergent Shared-Dependency Pins (libusb / libserialport)
 
-**Error**:
+**Trace** (informational, not an error):
 ```
-error: libserialport SHA mismatch between libdof (...) and libzedmd (...)
+note: libusb SHA differs between libdmdutil (...) and libdof (...); building separate instances (libusb / libusbDof)
+note: libserialport SHA differs between libzedmd (...) and libdof (...); building separate instances (libserialport / libserialportDof)
 ```
 
 **Cause**:
-`upstream-sources.nix` detected that two different upstream dependencies declare conflicting commit hashes for the same library in their respective `platforms/config.sh`.
+Two upstream projects pin the same shared library to different commits in their respective `platforms/config.sh`. This is expected and handled: `upstream-sources.nix` fetches a separate instance per consumer (mirroring upstream, where each project builds and stages its own copy into its `third-party/` tree).
 
-**Fix**:
-1. Check both commits in upstream repositories to see if one is ahead of the other.
-2. In `upstream-sources.nix`, review the assertion:
-   - If one repository is the canonical upstream authority (e.g. `libdof` vs `libzedmd`), decide which SHA to adopt or loosen the check to a `builtins.trace` warning (similar to `_checkLibusb`).
-   - If both require exact compatibility, patch or override the upstream source to match the unified SHA.
+**Consumer mapping** (keep in sync if you rewire `pkgs/`):
+- `libusb` (canonical) = libdmdutil's pin → used by `pkgs/libdmdutil`
+- `libusbDof` = libdof's pin → used by `pkgs/libdof` and `pkgs/libftdi`
+- `libserialport` (canonical) = libzedmd's pin → used by `pkgs/libzedmd` and `pkgs/libdmdutil`
+- `libserialportDof` = libdof's pin → used by `pkgs/libdof`
+
+When the pins agree, both instances are the same store path (no extra build). If a *new* shared dependency with divergent pins appears, follow the same pattern: fetch per-consumer instances in `upstream-sources.nix`, expose the second one in the `vpinPkgs` scope with an overridden `inputs` src, and point the consumer's `buildInputs` at it.
 
 ---
 

@@ -136,10 +136,11 @@ vpinballConfig        libdmdutilConfig        libdofConfig
      Uses `builtins.fetchTree "git+${url}?submodules=1&allRefs=1&rev=${rev}"`.
      *Why*: Used for `sdl3-image` and `sdl3-ttf` which vendor formats (libpng, libjpeg, libwebp, harfbuzz, etc.) as Git submodules. The `allRefs=1` parameter tells Nix/Lix to search all Git refs to locate the commit.
 
-3. **Consistency Verification**:
-   When multiple sub-dependencies pin the same shared library, `upstream-sources.nix` verifies consistency:
-   - `_checkSerialport`: Throws a hard error if `libdof` and `libzedmd` request different `LIBSERIALPORT_SHA` commits.
-   - `_checkLibusb`: Emits a trace warning if `libdmdutil` and `libdof` disagree on `LIBUSB_SHA`.
+3. **Divergent Shared-Dependency Pins (separate instances)**:
+   Two libraries are each pinned independently by two upstream projects. When the pins diverge, `upstream-sources.nix` fetches a separate instance per consumer (mirroring upstream, where each project builds and stages its own copy into its `third-party/` tree) and emits an informational `builtins.trace` note:
+   - **`libusb`** — pinned by `libdmdutil` and `libdof`. Canonical `libusb` follows libdmdutil's pin; `libusbDof` follows libdof's pin and is used by `libdof` and `libftdi` (which builds inside libdof's tree).
+   - **`libserialport`** — pinned by `libzedmd` and `libdof`. Canonical `libserialport` follows libzedmd's pin (libdmdutil stages this copy from libzedmd's build); `libserialportDof` follows libdof's pin.
+   When the pins agree, both attributes are the same store path, so no extra build results. The `vpinPkgs` scope exposes the second instances as `libusbDof` / `libserialportDof` (same `pkgs/libusb` / `pkgs/libserialport` derivations with an overridden `inputs` src).
 
 ---
 

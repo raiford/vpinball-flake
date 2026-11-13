@@ -28,7 +28,7 @@ upstream-sources.nix
     ├── 2. Fetches libdmdutil & libdof via builtins.fetchTree (GitHub archive API)
     ├── 3. Parses their platforms/config.sh to fetch child deps (libzedmd, libserum, etc.)
     ├── 4. Parses libzedmd/platforms/config.sh for cargs, sockpp, libframeutil
-    └── 5. Verifies SHA consistency across transitive dependencies
+    └── 5. Fetches separate instances of shared deps when upstream pins diverge
     │
     ▼
 flake.nix (allInputs = inputs // upstreamSources)

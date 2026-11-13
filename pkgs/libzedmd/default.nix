@@ -2,6 +2,7 @@
   lib,
   stdenv,
   pkgs,
+  vpinPkgs,
   inputs,
   buildType ? "Release",
 }:
@@ -14,7 +15,7 @@ stdenv.mkDerivation {
     cmake
   ];
 
-  buildInputs = with pkgs; [
+  buildInputs = with vpinPkgs; [
     libserialport # TODO: Attempting to use this from nixpkgs but might need to repackage.
     cargs
     libframeutil

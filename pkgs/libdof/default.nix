@@ -2,6 +2,7 @@
   lib,
   stdenv,
   pkgs,
+  vpinPkgs,
   inputs,
   buildType ? "Release",
 }:
@@ -14,13 +15,15 @@ stdenv.mkDerivation {
     cmake
   ];
 
-  buildInputs = with pkgs; [
+  buildInputs = (with pkgs; [
+    systemd # for libudev
+  ])
+  ++ (with vpinPkgs; [
     hidapi
     libserialport
     libftdi
     libusb
-    systemd # for libudev
-  ];
+  ]);
 
   cmakeFlags = [
     "-DPLATFORM=linux"

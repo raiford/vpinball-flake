@@ -15,7 +15,7 @@ A Nix flake that builds [Visual Pinball](https://github.com/vpinball/vpinball) (
 ## How it works
 
 - **Pinned sources.** Every dependency is a flake input pinned to the exact SHA that upstream's `config.sh` files declare, so the Nix build matches what vpinball is tested against. `pkgs/` contains a derivation for each dependency (bgfx, pinmame, libdof, libdmdutil, libzedmd, SDL3 + SDL_image/SDL_ttf with vendored format libs, etc.).
-- **Overlay.** `overlays.default` injects the custom packages into nixpkgs; the flake also sets `allowUnfree` for pinmame (legacy MAME files carry the non-commercial MAME license).
+- **Scoped custom packages.** The custom packages are built as a `vpinPkgs` scope (via `lib.makeScope`) on top of plain nixpkgs and are passed explicitly to the vpinball derivations — they are *not* applied as a global overlay, so unrelated nixpkgs packages (chromium, etc.) keep their standard binary-cache-friendly builds. The flake also sets `allowUnfree` for pinmame (legacy MAME files carry the non-commercial MAME license).
 - **Drift check.** `scripts/check-external.sh` compares the `*_SHA`/`*_VERSION` variables the upstream Linux build scripts reference against what the flake's update hooks handle, flagging new upstream dependencies that haven't been wired in yet.
 
 ## Usage

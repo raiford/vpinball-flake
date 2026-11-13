@@ -69,64 +69,82 @@
       # Merged inputs accessible by derivations in pkgs/
       allInputs = inputs // upstreamSources // { inherit vpinfeRelease; };
 
-      customPackages = final: prev: {
-        bgfx = final.callPackage ./pkgs/bgfx {
-          bgfx-cmake = allInputs.bgfx-cmake;
-          bgfx-patch = allInputs.bgfx-patch;
-        };
-        bgfx-shaderc = final.callPackage ./pkgs/bgfx-shaderc {
-          bgfx-cmake = allInputs.bgfx-cmake;
-          bgfx-patch = allInputs.bgfx-patch;
-        };
-        openxr = final.callPackage ./pkgs/openxr { inputs = allInputs; };
-        # Static, SHA-pinned copies of libs that also exist in nixpkgs.
-        # Distinct names avoid shadowing the nixpkgs versions for unrelated
-        # packages; vpinball stages them into its third-party/ tree.
-        zlibStatic = final.callPackage ./pkgs/zlib { inputs = allInputs; };
-        liboggStatic = final.callPackage ./pkgs/libogg { inputs = allInputs; };
-        libopusStatic = final.callPackage ./pkgs/libopus { inputs = allInputs; };
-        opusfileStatic = final.callPackage ./pkgs/opusfile { inputs = allInputs; };
-        libmysofaStatic = final.callPackage ./pkgs/libmysofa { inputs = allInputs; };
-        libspatialaudioStatic = final.callPackage ./pkgs/libspatialaudio { inputs = allInputs; };
-        pinmame-data = final.callPackage ./pkgs/pinmame-data { inputs = allInputs; };
-        cargs = final.callPackage ./pkgs/cargs { inputs = allInputs; };
-        freeimage = final.callPackage ./pkgs/freeimage { inputs = allInputs; };
-        libaltsound = final.callPackage ./pkgs/libaltsound { inputs = allInputs; };
-        libdmdutil = final.callPackage ./pkgs/libdmdutil { inputs = allInputs; };
-        libwinevbs = final.callPackage ./pkgs/libwinevbs { inputs = allInputs; };
-        libdof = final.callPackage ./pkgs/libdof { inputs = allInputs; };
-        libframeutil = final.callPackage ./pkgs/libframeutil { inputs = allInputs; };
-        libpupdmd = final.callPackage ./pkgs/libpupdmd { inputs = allInputs; };
-        libserum = final.callPackage ./pkgs/libserum { inputs = allInputs; };
-        libzedmd = final.callPackage ./pkgs/libzedmd { inputs = allInputs; };
-        pinmame = final.callPackage ./pkgs/pinmame { inputs = allInputs; };
-        sockpp = final.callPackage ./pkgs/sockpp { inputs = allInputs; };
-        libusb = final.callPackage ./pkgs/libusb { inputs = allInputs; };
-        libvni = final.callPackage ./pkgs/libvni { inputs = allInputs; };
-        libftdi = final.callPackage ./pkgs/libftdi { inputs = allInputs; };
-        libserialport = final.callPackage ./pkgs/libserialport { inputs = allInputs; };
-        hidapi = final.callPackage ./pkgs/hidapi { inputs = allInputs; };
+      # SHA-pinned custom packages for vpinball and its dependencies, built
+      # as a scope on top of a given nixpkgs set (`base`).
+      #
+      # Deliberately NOT applied as a global overlay: packages in pkgs/
+      # reference these explicitly via their `vpinPkgs` argument, so
+      # unrelated nixpkgs packages (chromium, etc.) keep their standard
+      # builds and stay substitutable from the binary cache.
+      #
+      # The scope's callPackage resolves arguments from `base // self`, so
+      # inside pkgs/ the `pkgs` argument is still plain nixpkgs while
+      # `vpinPkgs` provides the custom builds (custom names shadow nixpkgs
+      # only within the scope). Cross-dependencies between custom packages
+      # (e.g. opusfile -> libogg/libopus) resolve through
+      # the scope lazily, so attribute order here does not matter.
+      vpinPkgs =
+        base: buildType:
+        base.lib.makeScope base.newScope (
+          self:
+          let
+            callPackage = self.callPackage;
+          in
+          {
+            # Expose the scope to packages that take a `vpinPkgs` argument;
+            # the scope's callPackage resolves it automatically from `self`.
+            vpinPkgs = self;
 
-        # NOTE: opusfileStatic depends on liboggStatic/libopusStatic and
-        # libmysofaStatic on zlibStatic via the `pkgs` set, so the overlay
-        # order above does not matter (callPackage resolves lazily).
+            bgfx = callPackage ./pkgs/bgfx {
+              bgfx-cmake = allInputs.bgfx-cmake;
+              bgfx-patch = allInputs.bgfx-patch;
+              inherit buildType;
+            };
+            bgfx-shaderc = callPackage ./pkgs/bgfx-shaderc {
+              bgfx-cmake = allInputs.bgfx-cmake;
+              bgfx-patch = allInputs.bgfx-patch;
+            };
+            openxr = callPackage ./pkgs/openxr { inputs = allInputs; inherit buildType; };
+            # Static, SHA-pinned copies of libs that also exist in nixpkgs.
+            # Same names as the nixpkgs versions, but the shadowing is
+            # confined to this scope, so unrelated packages are unaffected.
+            # vpinball stages them into its third-party/ tree.
+            zlib = callPackage ./pkgs/zlib { inputs = allInputs; inherit buildType; };
+            libogg = callPackage ./pkgs/libogg { inputs = allInputs; inherit buildType; };
+            libopus = callPackage ./pkgs/libopus { inputs = allInputs; inherit buildType; };
+            opusfile = callPackage ./pkgs/opusfile { inputs = allInputs; inherit buildType; };
+            libmysofa = callPackage ./pkgs/libmysofa { inputs = allInputs; inherit buildType; };
+            libspatialaudio = callPackage ./pkgs/libspatialaudio { inputs = allInputs; inherit buildType; };
+            pinmame-data = callPackage ./pkgs/pinmame-data { inputs = allInputs; };
+            cargs = callPackage ./pkgs/cargs { inputs = allInputs; inherit buildType; };
+            freeimage = callPackage ./pkgs/freeimage { inputs = allInputs; inherit buildType; };
+            libaltsound = callPackage ./pkgs/libaltsound { inputs = allInputs; inherit buildType; };
+            libdmdutil = callPackage ./pkgs/libdmdutil { inputs = allInputs; inherit buildType; };
+            libwinevbs = callPackage ./pkgs/libwinevbs { inputs = allInputs; inherit buildType; };
+            libdof = callPackage ./pkgs/libdof { inputs = allInputs; inherit buildType; };
+            libframeutil = callPackage ./pkgs/libframeutil { inputs = allInputs; };
+            libpupdmd = callPackage ./pkgs/libpupdmd { inputs = allInputs; inherit buildType; };
+            libserum = callPackage ./pkgs/libserum { inputs = allInputs; inherit buildType; };
+            libzedmd = callPackage ./pkgs/libzedmd { inputs = allInputs; inherit buildType; };
+            pinmame = callPackage ./pkgs/pinmame { inputs = allInputs; inherit buildType; };
+            sockpp = callPackage ./pkgs/sockpp { inputs = allInputs; inherit buildType; };
+            libusb = callPackage ./pkgs/libusb { inputs = allInputs; };
+            libvni = callPackage ./pkgs/libvni { inputs = allInputs; inherit buildType; };
+            libftdi = callPackage ./pkgs/libftdi { inputs = allInputs; inherit buildType; };
+            libserialport = callPackage ./pkgs/libserialport { inputs = allInputs; };
+            hidapi = callPackage ./pkgs/hidapi { inputs = allInputs; inherit buildType; };
 
-        # SDL has a lot of custom build options in upstream nixpkgs for audio and video stuff.
-        # If necessary to force support for wayland you can add a .override to these to enable waylandSupport
-        sdl3 = prev.sdl3.overrideAttrs (old: {
-          src = allInputs.sdl3;
-          version = "";
-        });
-        sdl3-ttf = prev.sdl3-ttf.overrideAttrs (old: {
-          src = allInputs.sdl3-ttf;
-          version = "";
-        });
-        sdl3-image = prev.sdl3-image.overrideAttrs (old: {
-          src = allInputs.sdl3-image;
-          version = "";
-        });
-      };
+            # SDL has a lot of custom build options in upstream nixpkgs for audio and video stuff.
+            # If necessary to force support for wayland you can add a .override to these to enable waylandSupport
+            sdl3 = callPackage ./pkgs/sdl3 { inputs = allInputs; inherit buildType; };
+            sdl3-ttf = callPackage ./pkgs/sdl3-ttf { inputs = allInputs; inherit buildType; };
+            sdl3-image = callPackage ./pkgs/sdl3-image { inputs = allInputs; inherit buildType; };
+          }
+        );
 
+      # Plain nixpkgs: the custom vpinball packages are NOT applied as an
+      # overlay here, so unrelated packages (chromium, ...) keep their
+      # standard, binary-cache-friendly builds.
       pkgsFor = forAllSystems (
         system:
         import nixpkgs {
@@ -136,7 +154,6 @@
           # package as unfreeRedistributable. Everything else in this flake
           # is free software.
           config.allowUnfree = true;
-          overlays = [ self.overlays.default ];
         }
       );
     in
@@ -148,32 +165,21 @@
         }
       );
 
-      overlays.default = final: prev: customPackages final prev;
-
       packages = forAllSystems (
         system:
         let
           pkgs = pkgsFor.${system};
-          customNames = builtins.attrNames (customPackages pkgs pkgs);
 
+          # vpinball plus its custom dependency tree, all built with the
+          # given build type (Release or Debug) so internal shared libraries
+          # (libpinmame.so, libdof.so, ...) carry matching debug symbols.
           makeVPinball =
             buildType:
-            let
-              relevantPkgs =
-                if buildType == "Release" then
-                  pkgs
-                else
-                  pkgs.extend (
-                    final: prev:
-                    pkgs.lib.genAttrs customNames (
-                      name:
-                        if prev.${name} ? override && (prev.${name}.override.__functionArgs.buildType or false)
-                        then prev.${name}.override { inherit buildType; }
-                        else prev.${name}
-                    )
-                  );
-            in
-            relevantPkgs.callPackage ./pkgs/vpinball { inputs = allInputs; inherit buildType; };
+            pkgs.callPackage ./pkgs/vpinball {
+              inputs = allInputs;
+              inherit buildType;
+              vpinPkgs = vpinPkgs pkgs buildType;
+            };
         in
         {
           vpinball = makeVPinball "Release";

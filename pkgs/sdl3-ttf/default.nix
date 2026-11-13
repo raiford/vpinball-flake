@@ -2,7 +2,7 @@
   lib,
   stdenv,
   pkgs,
-  sdl3,
+  vpinPkgs,
   inputs,
   buildType ? "Release",
 }:
@@ -15,7 +15,7 @@ stdenv.mkDerivation {
     cmake
   ];
 
-  buildInputs = with pkgs; [
+  buildInputs = with vpinPkgs; [
     sdl3
   ];
 
@@ -24,7 +24,7 @@ stdenv.mkDerivation {
     "-DSDLTTF_SAMPLES=OFF"
     "-DSDLTTF_VENDORED=ON"
     "-DSDLTTF_HARFBUZZ=ON"
-    "-DSDL3_DIR=${sdl3}"
+    "-DSDL3_DIR=${vpinPkgs.sdl3}"
     "-DCMAKE_BUILD_TYPE=${buildType}"
   ];
 

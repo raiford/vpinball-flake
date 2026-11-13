@@ -2,6 +2,7 @@
   lib,
   stdenv,
   pkgs,
+  vpinPkgs,
   inputs,
   buildType ? "Release",
 }:
@@ -14,7 +15,7 @@ stdenv.mkDerivation {
     cmake
   ];
 
-  buildInputs = with pkgs; [
+  buildInputs = with vpinPkgs; [
     libusb
   ];
 
@@ -26,8 +27,8 @@ stdenv.mkDerivation {
     "-DFTDI_EEPROM=OFF"
     "-DEXAMPLES=OFF"
     "-DSTATICLIBS=OFF"
-    "-DLIBUSB_INCLUDE_DIR=${pkgs.libusb}/include/libusb-1.0"
-    "-DLIBUSB_LIBRARIES=${pkgs.libusb}/lib/libusb-1.0.so"
+    "-DLIBUSB_INCLUDE_DIR=${vpinPkgs.libusb}/include/libusb-1.0"
+    "-DLIBUSB_LIBRARIES=${vpinPkgs.libusb}/lib/libusb-1.0.so"
     "-DCMAKE_BUILD_TYPE=Release"
     "-DCMAKE_BUILD_TYPE=${buildType}"
   ];

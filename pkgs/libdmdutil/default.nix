@@ -2,6 +2,7 @@
   lib,
   stdenv,
   pkgs,
+  vpinPkgs,
   inputs,
   buildType ? "Release",
 }:
@@ -14,8 +15,10 @@ stdenv.mkDerivation {
     cmake
   ];
 
-  buildInputs = with pkgs; [
+  buildInputs = (with pkgs; [
     zlib
+  ])
+  ++ (with vpinPkgs; [
     libframeutil
     libzedmd
     libserum
@@ -25,7 +28,7 @@ stdenv.mkDerivation {
     cargs
     libusb
     libvni
-  ];
+  ]);
 
   cmakeFlags = [
     "-DPLATFORM=linux"

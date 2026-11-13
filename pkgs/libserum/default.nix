@@ -2,6 +2,7 @@
   lib,
   stdenv,
   pkgs,
+  vpinPkgs,
   inputs,
   buildType ? "Release",
 }:
@@ -10,10 +11,12 @@ stdenv.mkDerivation {
 
   src = inputs.libserum;
 
-  nativeBuildInputs = with pkgs; [
+  nativeBuildInputs = (with pkgs; [
     cmake
+  ])
+  ++ (with vpinPkgs; [
     libframeutil
-  ];
+  ]);
 
   cmakeFlags = [
     "-DPLATFORM=linux"

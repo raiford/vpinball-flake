@@ -4,6 +4,7 @@
   pkgs,
   lib,
   inputs,
+  vpinPkgs,
   buildType ? "Release"
 }:
 stdenv.mkDerivation {
@@ -19,38 +20,13 @@ stdenv.mkDerivation {
     cmake
   ];
 
-  buildInputs = with pkgs; [
-    # Custom dependencies
-    freeimage
-    bgfx
-    bgfx-shaderc
-    pinmame
-    libdmdutil
-    libwinevbs
-    libaltsound
-    libdof
-    libpupdmd
-    libserum
-    libzip
-    hidapi
-    libvni
-    openxr
-    zlibStatic
-    liboggStatic
-    libopusStatic
-    opusfileStatic
-    libmysofaStatic
-    libspatialaudioStatic
-    pinmame-data
-
+  buildInputs = (with pkgs; [
     # vpinball upstream is using a SHA that is pinned around v7
     # If the vpinball updates to v8 this should be updated.
     ffmpeg
 
     # System dependencies
-    sdl3
-    sdl3-ttf
-    sdl3-image
+    libzip
     pipewire
     nasm
     libdrm
@@ -65,7 +41,33 @@ stdenv.mkDerivation {
     libxrandr
     libxkbcommon
     libxtst
-  ];
+  ])
+  # SHA-pinned custom dependencies (see vpinPkgs in flake.nix)
+  ++ (with vpinPkgs; [
+    freeimage
+    bgfx
+    bgfx-shaderc
+    pinmame
+    libdmdutil
+    libwinevbs
+    libaltsound
+    libdof
+    libpupdmd
+    libserum
+    hidapi
+    libvni
+    openxr
+    zlib
+    libogg
+    libopus
+    opusfile
+    libmysofa
+    libspatialaudio
+    pinmame-data
+    sdl3
+    sdl3-ttf
+    sdl3-image
+  ]);
 
   hardeningDisable = [ "format" ];
 
@@ -78,37 +80,37 @@ stdenv.mkDerivation {
 
     # shaderc host tool (compiles the embedded BGFX shaders at build time)
     mkdir -p third-party/tools/linux-x64
-    cp ${pkgs.bgfx-shaderc}/bin/shaderc third-party/tools/linux-x64/
+    cp ${vpinPkgs.bgfx-shaderc}/bin/shaderc third-party/tools/linux-x64/
 
     # Static libs linked by name from third-party/build-libs/linux-x64
     mkdir -p third-party/build-libs/linux-x64
-    cp ${pkgs.zlibStatic}/lib/libz.a third-party/build-libs/linux-x64/
-    cp ${pkgs.liboggStatic}/lib/libogg.a third-party/build-libs/linux-x64/
-    cp ${pkgs.libopusStatic}/lib/libopus.a third-party/build-libs/linux-x64/
-    cp ${pkgs.opusfileStatic}/lib/libopusfile.a third-party/build-libs/linux-x64/
-    cp ${pkgs.libmysofaStatic}/lib/libmysofa.a third-party/build-libs/linux-x64/
-    cp ${pkgs.libspatialaudioStatic}/lib/libspatialaudio.a third-party/build-libs/linux-x64/
+    cp ${vpinPkgs.zlib}/lib/libz.a third-party/build-libs/linux-x64/
+    cp ${vpinPkgs.libogg}/lib/libogg.a third-party/build-libs/linux-x64/
+    cp ${vpinPkgs.libopus}/lib/libopus.a third-party/build-libs/linux-x64/
+    cp ${vpinPkgs.opusfile}/lib/libopusfile.a third-party/build-libs/linux-x64/
+    cp ${vpinPkgs.libmysofa}/lib/libmysofa.a third-party/build-libs/linux-x64/
+    cp ${vpinPkgs.libspatialaudio}/lib/libspatialaudio.a third-party/build-libs/linux-x64/
 
     # OpenXR runtime loader (linked from third-party/runtime-libs/linux-x64)
     mkdir -p third-party/runtime-libs/linux-x64
-    cp -a ${pkgs.openxr}/lib/libopenxr_loader.so* third-party/runtime-libs/linux-x64/
+    cp -a ${vpinPkgs.openxr}/lib/libopenxr_loader.so* third-party/runtime-libs/linux-x64/
 
     # Headers expected under third-party/include/
-    cp -r ${pkgs.zlibStatic}/include/. third-party/include/
-    cp -r ${pkgs.liboggStatic}/include/ogg third-party/include/
+    cp -r ${vpinPkgs.zlib}/include/. third-party/include/
+    cp -r ${vpinPkgs.libogg}/include/ogg third-party/include/
     # The pinned opus/opusfile installs under include/opus/; upstream
     # flattens these into third-party/include/ (miniaudio includes <opusfile.h>)
-    cp ${pkgs.libopusStatic}/include/opus/*.h third-party/include/
-    cp ${pkgs.opusfileStatic}/include/opus/opusfile.h third-party/include/
-    cp ${pkgs.libmysofaStatic}/include/mysofa.h ${pkgs.libmysofaStatic}/include/mysofa_export.h third-party/include/
-    cp -r ${pkgs.libspatialaudioStatic}/include/spatialaudio third-party/include/
+    cp ${vpinPkgs.libopus}/include/opus/*.h third-party/include/
+    cp ${vpinPkgs.opusfile}/include/opus/opusfile.h third-party/include/
+    cp ${vpinPkgs.libmysofa}/include/mysofa.h ${vpinPkgs.libmysofa}/include/mysofa_export.h third-party/include/
+    cp -r ${vpinPkgs.libspatialaudio}/include/spatialaudio third-party/include/
     mkdir -p third-party/include/openxr
-    cp ${pkgs.openxr}/include/openxr/*.h third-party/include/openxr/
+    cp ${vpinPkgs.openxr}/include/openxr/*.h third-party/include/openxr/
 
     # PinMAME machine data, shipped with the pinmame plugin as default data
     mkdir -p third-party/memmaps third-party/gamedefs
-    cp -r ${pkgs.pinmame-data}/memmaps/. third-party/memmaps/
-    cp -r ${pkgs.pinmame-data}/gamedefs/. third-party/gamedefs/
+    cp -r ${vpinPkgs.pinmame-data}/memmaps/. third-party/memmaps/
+    cp -r ${vpinPkgs.pinmame-data}/gamedefs/. third-party/gamedefs/
 
     runHook postPreConfigure
   '';

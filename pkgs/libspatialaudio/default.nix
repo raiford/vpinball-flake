@@ -2,6 +2,7 @@
   lib,
   stdenv,
   pkgs,
+  vpinPkgs,
   inputs,
   buildType ? "Release",
 }:
@@ -14,8 +15,8 @@ stdenv.mkDerivation {
     cmake
   ];
 
-  buildInputs = with pkgs; [
-    libmysofaStatic
+  buildInputs = with vpinPkgs; [
+    libmysofa
   ];
 
   cmakeFlags = [

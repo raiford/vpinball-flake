@@ -2,6 +2,7 @@
   lib,
   stdenv,
   pkgs,
+  vpinPkgs,
   inputs,
   buildType ? "Release",
 }:
@@ -14,9 +15,9 @@ stdenv.mkDerivation {
     cmake
   ];
 
-  buildInputs = with pkgs; [
-    liboggStatic
-    libopusStatic
+  buildInputs = with vpinPkgs; [
+    libogg
+    libopus
   ];
 
   cmakeFlags = [

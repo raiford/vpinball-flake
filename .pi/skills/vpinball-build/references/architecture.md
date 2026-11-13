@@ -145,26 +145,34 @@ vpinballConfig        libdmdutilConfig        libdofConfig
 
 ## 3. Derivations and Package Architecture (`pkgs/`)
 
-All custom packages live under `pkgs/` and are injected into nixpkgs via `overlays.default` in `flake.nix`.
+All custom packages live under `pkgs/` and are built as the `vpinPkgs` scope in `flake.nix` (passed explicitly to the vpinball derivations, not applied as a global overlay).
 
-### 3.1 Overlay Injection & Parameterization
+### 3.1 Scoped Custom Packages & Parameterization
 
-In `flake.nix`:
+All custom packages live under `pkgs/` and are built as a **scope** in `flake.nix` — deliberately NOT as a global overlay, so unrelated nixpkgs packages (chromium, etc.) keep their standard, binary-cache-friendly builds:
 ```nix
-customPackages = final: prev: {
-  bgfx = final.callPackage ./pkgs/bgfx { ... };
-  bgfx-shaderc = final.callPackage ./pkgs/bgfx-shaderc { ... };
-  pinmame = final.callPackage ./pkgs/pinmame { inputs = allInputs; };
-  libdmdutil = final.callPackage ./pkgs/libdmdutil { inputs = allInputs; };
-  ...
-};
+vpinPkgs =
+  base: buildType ? "Release":
+  base.lib.makeScope base.newScope (
+    self:
+    let callPackage = self.callPackage; in
+    {
+      bgfx = callPackage ./pkgs/bgfx { ...; inherit buildType; };
+      bgfx-shaderc = callPackage ./pkgs/bgfx-shaderc { ...; };
+      pinmame = callPackage ./pkgs/pinmame { inputs = allInputs; inherit buildType; };
+      libdmdutil = callPackage ./pkgs/libdmdutil { inputs = allInputs; inherit buildType; };
+      ...
+    }
+  );
 ```
-Every package receives `inputs = allInputs;` (where `allInputs = inputs // upstreamSources;`).
+- Every package receives `inputs = allInputs;` (where `allInputs = inputs // upstreamSources;`).
+- The scope's `callPackage` resolves arguments from `base // self`: inside `pkgs/`, the `pkgs` argument is still plain nixpkgs, while custom cross-dependencies are referenced explicitly via a `vpinPkgs` argument (e.g. `buildInputs = (with pkgs; [ zlib ]) ++ (with vpinPkgs; [ libzedmd libserum ]);`).
+- `pkgs/vpinball/default.nix` receives `vpinPkgs = vpinPkgs pkgs buildType` from `makeVPinball`.
 
 ### 3.2 Debug vs Release Propagation
 
 `flake.nix` exports both `packages.vpinball` (Release) and `packages.vpinball-debug` (Debug):
-- For Debug builds, `pkgs.extend` overrides every package in `customPackages` with `{ buildType = "Debug"; }` if the package's `.override` takes `buildType`.
+- `makeVPinball "Debug"` builds the whole custom tree via `vpinPkgs pkgs "Debug"`, which passes `buildType = "Debug"` to every custom package that takes `buildType`.
 - This ensures all internal C++ shared libraries (`libpinmame.so`, `libdof.so`, `libdmdutil.so`, etc.) are built with debug symbols and matching ABI flags.
 
 ### 3.3 Key Package Quirks and Solutions

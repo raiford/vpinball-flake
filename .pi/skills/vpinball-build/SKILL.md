@@ -32,8 +32,9 @@ upstream-sources.nix
     │
     ▼
 flake.nix (allInputs = inputs // upstreamSources)
-    ├── overlays.default (injects customPackages from pkgs/*)
+    ├── vpinPkgs (lib.makeScope of pkgs/*; NOT a global overlay)
     ├── packages.vpinball (Release) & packages.vpinball-debug (Debug)
+    │     └── callPackage ./pkgs/vpinball { vpinPkgs = vpinPkgs pkgs buildType; }
     └── devShells.default
 ```
 
@@ -128,13 +129,16 @@ When `check-external.sh` reports a missing variable (e.g. `LIBFOO_SHA`):
    ```
 
 4. **Register in `flake.nix`**:
-   Add to `customPackages final prev`:
+   Add to the `vpinPkgs` scope (a `lib.makeScope` over plain nixpkgs, NOT a global overlay):
    ```nix
-   libfoo = final.callPackage ./pkgs/libfoo { inputs = allInputs; };
+   libfoo = callPackage ./pkgs/libfoo { inputs = allInputs; inherit buildType; };
    ```
+   If `libfoo` depends on other custom packages, add a `vpinPkgs` argument to its
+   derivation and list them under `with vpinPkgs; [...]` (keep nixpkgs deps in the
+   `with pkgs; [...]` part of the joined list).
 
 5. **Add to `pkgs/vpinball/default.nix`**:
-   Add `libfoo` to `buildInputs`.
+   Add `libfoo` to the `with vpinPkgs; [...]` part of `buildInputs`.
 
 6. **Verify drift check clears**:
    ```bash
@@ -147,7 +151,7 @@ When `check-external.sh` reports a missing variable (e.g. `LIBFOO_SHA`):
 
 - **Release Build**: `nix build .#vpinball` (or `nix build .`)
 - **Debug Build**: `nix build .#vpinball-debug`
-  - In `flake.nix`, `makeVPinball "Debug"` uses `pkgs.extend` to automatically invoke `.override { buildType = "Debug"; }` on every custom package that takes `buildType`.
+  - In `flake.nix`, `makeVPinball "Debug"` builds `vpinPkgs pkgs "Debug"`, which passes `buildType = "Debug"` to every custom package that takes `buildType`.
   - When writing or modifying any package under `pkgs/`, always accept `buildType ? "Release"` and pass `-DCMAKE_BUILD_TYPE=${buildType}`.
 
 ---
